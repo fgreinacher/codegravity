@@ -1,7 +1,12 @@
 ﻿
 (function ($) {
-
+    
     var Renderer = function(canvas) {
+        var strokeStyles = [      
+            "rgba(255,0,0, .333)",
+            "rgba(0,255,0, .333)",
+            "rgba(0,0,255, .333)"
+        ];
         var canvas = $(canvas).get(0);
         var ctx = canvas.getContext("2d");
         var particleSystem;
@@ -28,7 +33,7 @@
                     // pt2:  {x:#, y:#}  target position in screen coords
 
                     // draw a line from pt1 to pt2
-                    ctx.strokeStyle = "rgba(0,0,0, .333)";
+                    ctx.strokeStyle = strokeStyles[edge.data.kind];
                     ctx.lineWidth = 1;
                     ctx.beginPath();
                     ctx.moveTo(pt1.x, pt1.y);
@@ -134,7 +139,7 @@
             $.each(types, function(idx, node) {
                 $.getJSON("api/dependencies/edges?node=" + node.name, function(edges) {
                     $.each(edges, function(idx, edge) {
-                        sys.addEdge(edge.source.name, edge.target.name, { length: 5 });
+                        sys.addEdge(edge.source.name, edge.target.name, { length: 5, kind: edge.kind });
                     });
                 });
             });

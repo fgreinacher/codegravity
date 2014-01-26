@@ -2,8 +2,8 @@
 {
     public enum DependencyKind
     {
-        MethodCall,
-        Uses,
-        Implements
+        MethodCall = 0,
+        Uses = 1,
+        Implements = 2,
     }
 }

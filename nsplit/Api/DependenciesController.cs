@@ -50,7 +50,7 @@ namespace nsplit.Api
                 {
                     var source = new Node {Name = dependecy.From.FullName};
                     var target = new Node {Name = dependecy.To.FullName};
-                    yield return new Edge {Source = source, Target = target};
+                    yield return new Edge {Source = source, Target = target, Kind = dependecy.DependencyKind };
                 }
             }
         }
