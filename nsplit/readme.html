@@ -1,0 +1,33 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta charset="utf-8" />
+        <title>Upsss!</title>
+    </head>
+    <body>
+        <h2>Upsss! It looks like I am not allowed to start a HTTP server here.</h2>
+        <p>
+            This application listens to http://localhost:8080/. By default, listening at a particular HTTP address requires administrator privileges. 
+        </p>
+        <p>
+            When you run me, therefore, you may get this error: &quot;HTTP could not register URL <a href="http://+:8080/">http://+:8080/</a>&quot;
+        </p>
+        <p>
+            There are two ways to avoid this error:
+        </p>
+        <ul>
+            <li>Run Visual Studio with elevated administrator permissions (right click and <i><b>&quot;Run as Administrator&quot;</b></i>), or</li>
+            <li>Use Netsh.exe to give your account permissions to reserve the URL.</li>
+        </ul>
+        <p>
+            To use Netsh.exe, open a command prompt with administrator privileges and enter the following command:following command:
+        </p>
+        <pre><span>netsh http add urlacl url = http:/+:8080/ user=machine\username</span></pre>
+        <p >
+            When you are finished self-hosting, be sure to delete the reservation:
+        </p>
+        <pre>//+:8080/</pre>
+
+    </body>
+</html>
