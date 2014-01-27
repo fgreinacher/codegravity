@@ -1,0 +1,30 @@
+﻿<html>
+<head>
+    <title>TypeTree</title>
+    <link href="css/jstree.css" rel="stylesheet" />
+    <link href="css/main.css" rel="stylesheet" />
+</head>
+<body>
+        <div id="tree">
+        </div>
+
+    <script src="js/lib/jquery.js"></script>
+    <script src="js/lib/jstree.js"></script>
+    <script>
+        $('#tree').jstree({
+            'core': {
+                'data': {
+                    'url': function(node) {
+                        return node.id === '#' ?
+                            '/api/treeview/children' :
+                            '/api/treeview/children';
+                    },
+                    'data': function(node) {
+                        return { 'id': node.id };
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

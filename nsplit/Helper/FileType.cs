@@ -8,6 +8,8 @@ namespace nsplit.Helper
         public static FileType Html = new FileType(".html", MediaTypeNames.Text.Html);
         public static FileType Javascript = new FileType(".js", "text/javascript");
         public static FileType Css = new FileType(".css", MediaTypeNames.Text.Plain);
+        public static FileType Gif = new FileType(".gif", MediaTypeNames.Image.Gif);
+        public static FileType Png = new FileType(".png", "image/png");
 
         
         private readonly string m_Extension;

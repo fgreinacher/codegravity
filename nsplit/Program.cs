@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.SelfHost;
 using System.Xml;
 using nsplit.Analyzer;
+using nsplit.DataStructures;
 using nsplit.Helper;
 
 namespace nsplit
@@ -17,6 +18,8 @@ namespace nsplit
     internal class Program
     {
         public static Dictionary<string, Type> Types;
+        public static QualifiedTree TypeTree;
+
 
         private static void Main(string[] args)
         {
@@ -26,6 +29,13 @@ namespace nsplit
             {
                 Types.Add(type.FullName, type);
             }
+
+            //-----------------------------------------
+            var typeTreeBuilder = new TypeTreeBuilder();
+            typeTreeBuilder.Add(assembly);
+            TypeTree = typeTreeBuilder.Tree;
+            //-----------------------------------------
+
 
 
             var config = new HttpSelfHostConfiguration("http://localhost:8080");
@@ -38,7 +48,9 @@ namespace nsplit
                 currentExePath,
                 FileType.Html,
                 FileType.Css,
-                FileType.Javascript);
+                FileType.Javascript,
+                FileType.Gif,
+                FileType.Png);
 
             config.MessageHandlers.Add(webServerOnFolder);
             config.Routes.MapHttpRoute(
@@ -63,7 +75,7 @@ namespace nsplit
                     Process.Start("readme.html");
                     return;
                 }
-                Process.Start("http://localhost:8080/index.html");
+                Process.Start("http://localhost:8080/index2.html");
                 Console.WriteLine("Press any key to quit.");
                 Console.ReadKey();
             }
