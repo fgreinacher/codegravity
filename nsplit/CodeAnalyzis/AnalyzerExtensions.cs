@@ -22,14 +22,6 @@ namespace nsplit.CodeAnalyzis
                     .Where(t => !t.IsCompilerGenerated());
         }
 
-        private static IEnumerable<MethodBase> MethodCalls(this MethodInfo methodInfo)
-        {
-            return
-                MethodBodyInfo
-                    .Create(methodInfo)
-                    .Calls();
-        }
-
         public static IEnumerable<Dependency> Dependecies(this Type type)
         {
             Console.WriteLine("START: [{0}] ...", type);
@@ -39,6 +31,45 @@ namespace nsplit.CodeAnalyzis
                     .Concat(type.Calls());
             Console.WriteLine("END: [{0}] ...", type);
             return result;
+        }
+
+        public static IEnumerable<Dependency> Calls(this Type type)
+        {
+            Console.WriteLine("Calls of type [{0}] ...", type);
+            return
+                type
+                    .Methods()
+                    .SelectMany(method => method.MethodCalls())
+                    .Select(methodCall => new MethodCall(type, methodCall.ReflectedType, methodCall))
+                    .Where(call => call.Target != type && !call.Target.IsNestedPrivate);
+        }
+
+        public static IEnumerable<Dependency> Uses(this Type type)
+        {
+            Console.WriteLine("Uses of type [{0}] ...", type);
+            IEnumerable<Type> fieldUses =
+                type
+                    .Fields()
+                    .Select(field => field.FieldType)
+                    .SelectMany(x => x.Unroll());
+
+            IEnumerable<Type> methodUses =
+                type
+                    .Methods()
+                    .SelectMany(method => method.UsedTypes());
+
+            return
+                fieldUses
+                    .Concat(methodUses)
+                    .Select(to => new Uses(type, to));
+        }
+
+        private static IEnumerable<MethodBase> MethodCalls(this MethodInfo methodInfo)
+        {
+            return
+                MethodBodyInfo
+                    .Create(methodInfo)
+                    .Calls();
         }
 
         private static IEnumerable<Dependency> Implements(this Type type)
@@ -57,18 +88,6 @@ namespace nsplit.CodeAnalyzis
                     ? Enumerable.Empty<T>()
                     : Enumerable.Repeat(element, 1);
         }
-
-        public static IEnumerable<Dependency> Calls(this Type type)
-        {
-            Console.WriteLine("Calls of type [{0}] ...", type);
-            return
-                type
-                    .Methods()
-                    .SelectMany(method => method.MethodCalls())
-                    .Select(methodCall => new MethodCall(type, methodCall.ReflectedType, methodCall))
-                    .Where(call => call.Target != type && !call.Target.IsNestedPrivate);
-        }
-
 
         private static IEnumerable<MethodInfo> Methods(this Type type)
         {
@@ -93,27 +112,7 @@ namespace nsplit.CodeAnalyzis
             return type.GetFields(flags);
         }
 
-        public static IEnumerable<Dependency> Uses(this Type type)
-        {
-            Console.WriteLine("Uses of type [{0}] ...", type);
-            IEnumerable<Type> fieldUses =
-                type
-                    .Fields()
-                    .Select(field => field.FieldType)
-                    .SelectMany(x => x.WithGenericTypeArguments());
-
-            IEnumerable<Type> methodUses =
-                type
-                    .Methods()
-                    .SelectMany(method => method.UsedTypes());
-
-            return
-                fieldUses
-                    .Concat(methodUses)
-                    .Select(to => new Uses(type, to));
-        }
-
-        private static IEnumerable<Type> WithGenericTypeArguments(this Type type)
+        private static IEnumerable<Type> Unroll(this Type type)
         {
             return type.IsConstructedGenericType
                 ? Once(type.GetGenericTypeDefinition()).Concat(type.GenericTypeArguments)
@@ -124,13 +123,14 @@ namespace nsplit.CodeAnalyzis
         {
             IEnumerable<Type> paramTypes = method
                 .GetParameters()
-                .Select(param => param.ParameterType);
+                .SelectMany(param => param.ParameterType.Unroll());
 
             Type[] genericArguments = method
                 .GetGenericArguments();
 
-            return
+            return 
                 Once(method.ReturnType)
+                    .SelectMany(returnType => returnType.Unroll())
                     .Concat(paramTypes)
                     .Concat(genericArguments);
         }

@@ -25,34 +25,53 @@ namespace Gma.CodeGravity.Tests
         }
 
         [Test]
+        public void Uses_GenericTypeArgumentInMethodReturn_IsDetected()
+        {
+            var type = typeof(TypeWithMethodReturnIEnumerableOfInt);
+
+            var uses = type.Uses();
+
+            Assert.That(uses, Has.Member(new Uses(type, typeof(int))));
+        }
+
+        [Test]
+        public void Uses_GenericTypeArgumentInMethodParameter_IsDetected()
+        {
+            var type = typeof(TypeWithMethodAcceptingIEnumerableOfChar);
+
+            var uses = type.Uses();
+
+            Assert.That(uses, Has.Member(new Uses(type, typeof(char))));
+        }
+
+        [Test]
         public void Uses_SingleGenericTypeArgumentInField_IsDetected()
         {
-            var typeD = typeof(TypeD);
+            var type = typeof(TypeWithFieldOfIEnumerableString);
 
-            var uses = typeD.Uses();
+            var uses = type.Uses();
 
-            Assert.That(uses, Has.Member(new Uses(typeD, typeof(string))));
+            Assert.That(uses, Has.Member(new Uses(type, typeof(string))));
         }
 
         [Test]
         public void Uses_MultipleGenericTypeArgumentsInField_AreDetected()
         {
-            var typeD = typeof(TypeD);
+            var type = typeof(TypeWithFieldOfTypeTupleIntFloat);
 
-            var uses = typeD.Uses();
+            var uses = type.Uses();
 
-            Assert.That(uses, Has.Member(new Uses(typeD, typeof(string))));
+            Assert.That(uses, Has.Member(new Uses(type, typeof(int))).And.Member(new Uses(type, typeof(float))));
         }
-
 
         [Test]
         public void Uses_GenericTypeInField_IsDetected()
         {
-            var typeD = typeof(TypeD);
+            var type = typeof(TypeWithFieldOfIEnumerableString);
 
-            var uses = typeD.Uses();
+            var uses = type.Uses();
 
-            Assert.That(uses, Has.Member(new Uses(typeD, typeof(IEnumerable<>))));
+            Assert.That(uses, Has.Member(new Uses(type, typeof(IEnumerable<>))));
         }
     }
 }
