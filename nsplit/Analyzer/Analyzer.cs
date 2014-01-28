@@ -1,10 +1,13 @@
-﻿using System;
-using System.CodeDom.Compiler;
+﻿#region usings
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using ClrTest.Reflection;
+
+#endregion
 
 namespace nsplit.Analyzer
 {
@@ -15,7 +18,7 @@ namespace nsplit.Analyzer
             return
                 assembly
                     .GetTypes()
-                    .Where(t=>!t.IsCompilerGenerated());
+                    .Where(t => !t.IsCompilerGenerated());
         }
 
         private static IEnumerable<MethodBase> MethodCalls(this MethodInfo methodInfo)
@@ -46,7 +49,7 @@ namespace nsplit.Analyzer
                     .Select(baseType => new Implements(type, baseType));
         }
 
-        private static IEnumerable<T> Once<T>(T element)
+        private static IEnumerable<T> Once<T>(T element) where T : class 
         {
             return
                 element == null

@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections;
+﻿#region usings
+
+using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace nsplit.DataStructures
+#endregion
+
+namespace nsplit.DataStructures.Tree
 {
-
     public class QualifiedName
     {
-        private readonly string[] m_Path;
+        public const char Qualifier = '.';
         private readonly string m_Leaf;
+        private readonly string[] m_Path;
 
         protected QualifiedName(string[] path, string leaf)
         {
@@ -26,10 +26,7 @@ namespace nsplit.DataStructures
 
         public string Leaf
         {
-            get
-            {
-                return m_Leaf;
-            }
+            get { return m_Leaf; }
         }
 
         public static QualifiedName Parse(string fullName)
@@ -41,7 +38,5 @@ namespace nsplit.DataStructures
             var leaf = parts[length];
             return new QualifiedName(path, leaf);
         }
-
-        public const char Qualifier = '.';
     }
 }

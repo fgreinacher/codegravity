@@ -10,6 +10,7 @@ using System.Web.Http.SelfHost;
 using System.Xml;
 using nsplit.Analyzer;
 using nsplit.DataStructures;
+using nsplit.DataStructures.Tree;
 using nsplit.Helper;
 
 namespace nsplit
@@ -17,7 +18,7 @@ namespace nsplit
     internal class Program
     {
         public static Dictionary<string, Type> Types;
-        public static QualifiedTree TypeTree;
+        public static Tree TypeTree;
 
 
         private static void Main(string[] args)
@@ -70,7 +71,7 @@ namespace nsplit
                     Process.Start("readme.html");
                     return;
                 }
-                Process.Start("http://localhost:8080/index2.html");
+                Process.Start("http://localhost:8080/index.html");
                 Console.WriteLine("Press any key to quit.");
                 Console.ReadKey();
             }

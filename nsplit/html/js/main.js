@@ -2,11 +2,13 @@
 (function ($) {
     
     var Renderer = function(canvas) {
-        var strokeStyles = [      
-            "rgba(255,0,0, .333)",
-            "rgba(0,255,0, .333)",
-            "rgba(0,0,255, .333)"
-        ];
+
+        var strokeStyles = {
+            "Implements":"rgba(255,0,0, .333)",
+            "Uses":"rgba(0,255,0, .333)",
+            "Calls": "rgba(0,0,255, .333)"
+        };
+        
         var canvas = $(canvas).get(0);
         var ctx = canvas.getContext("2d");
         var particleSystem;

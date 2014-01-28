@@ -34,6 +34,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper">
+      <HintPath>..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper.Net4">
+      <HintPath>..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.Net4.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -65,19 +71,21 @@
     <Compile Include="Api\DependenciesController.cs" />
     <Compile Include="Analyzer\Dependecy.cs" />
     <Compile Include="Analyzer\DependencyKind.cs" />
-    <Compile Include="Api\Edge.cs" />
+    <Compile Include="Api\Dto\EdgeDto.cs" />
+    <Compile Include="Api\Dto\VertexDto.cs" />
+    <Compile Include="DataStructures\Graph\Edge.cs" />
     <Compile Include="Analyzer\Implements.cs" />
     <Compile Include="Analyzer\MethodCall.cs" />
-    <Compile Include="Api\Node.cs" />
-    <Compile Include="Api\QualifiedTreeNodeDto.cs" />
+    <Compile Include="DataStructures\Graph\Vertex.cs" />
+    <Compile Include="Api\Dto\NodeDto.cs" />
     <Compile Include="Api\TreeViewController.cs" />
-    <Compile Include="DataStructures\IQualifiedTreeNode.cs" />
-    <Compile Include="DataStructures\QualifiedTree.cs" />
-    <Compile Include="DataStructures\QualifiedTreeLeaf.cs" />
-    <Compile Include="DataStructures\QualifiedTreeNode.cs" />
-    <Compile Include="DataStructures\QualifiedTreeNodeBase.cs" />
-    <Compile Include="DataStructures\QualifiedTreeNodeFactory.cs" />
-    <Compile Include="DataStructures\QualifiedName.cs" />
+    <Compile Include="DataStructures\Tree\INode.cs" />
+    <Compile Include="DataStructures\Tree\Tree.cs" />
+    <Compile Include="DataStructures\Tree\Leaf.cs" />
+    <Compile Include="DataStructures\Tree\Node.cs" />
+    <Compile Include="DataStructures\Tree\NodeBase.cs" />
+    <Compile Include="DataStructures\Tree\NodeFactory.cs" />
+    <Compile Include="DataStructures\Tree\QualifiedName.cs" />
     <Compile Include="Helper\FileType.cs" />
     <None Include="html\css\main.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -147,6 +155,12 @@
     <None Include="html\css\n.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.Net4.dll">
+      <Link>AutoMapper.Net4.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

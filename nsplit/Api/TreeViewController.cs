@@ -1,37 +1,31 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using AutoMapper;
+using nsplit.Api.Dto;
 using nsplit.DataStructures;
+using nsplit.DataStructures.Tree;
 
 namespace nsplit.Api
 {
     public class TreeViewController : ApiController
     {
-        public IEnumerable<QualifiedTreeNodeDto> GetChildren(string id)
+        public IEnumerable<NodeDto> GetChildren(string id)
         {
-            int idNo = 0;
-            idNo = id == "#" ? 0 : int.Parse(id);
+            int idNo = (id == "#") ? 0 : int.Parse(id);
 
-            IQualifiedTreeNode parent;
+            INode parent;
             bool isOk = GetTree().TryGet(idNo, out parent);
-            if (!isOk) return Enumerable.Empty<QualifiedTreeNodeDto>();
-            return parent.Children().Select(ToDto);
+            if (!isOk) return Enumerable.Empty<NodeDto>();
+            return 
+                parent
+                    .Children()
+                    .Select(Mapper.DynamicMap<NodeDto>);
         }
 
-        private QualifiedTree GetTree()
+        private Tree GetTree()
         {
             return Program.TypeTree;
-        }
-
-        private static QualifiedTreeNodeDto ToDto(IQualifiedTreeNode node)
-        {
-            return new QualifiedTreeNodeDto
-            {
-                Id = node.Id,
-                Text = node.Name,
-                HasChildren = !node.IsLeaf(),
-                Icon = node.IsLeaf() ? "/css/c.png" : "/css/n.png"
-            };
         }
     }
 }

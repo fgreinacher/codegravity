@@ -5,20 +5,21 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using nsplit.DataStructures;
+using nsplit.DataStructures.Tree;
 
 namespace nsplit.Analyzer
 {
     internal class TypeTreeBuilder
     {
-        private readonly QualifiedTree m_Tree;
+        private readonly Tree m_Tree;
 
         public TypeTreeBuilder()
         {
-            var nodeFactory = new QualifiedTreeNodeFactory();
-            m_Tree = new QualifiedTree(nodeFactory);
+            var nodeFactory = new NodeFactory();
+            m_Tree = new Tree(nodeFactory);
         }
 
-        public QualifiedTree Tree
+        public Tree Tree
         {
             get { return m_Tree; }
         }
