@@ -3,8 +3,7 @@ using System.Linq;
 using System.Web.Http;
 using AutoMapper;
 using nsplit.Api.Dto;
-using nsplit.DataStructures;
-using nsplit.DataStructures.Tree;
+using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
 namespace nsplit.Api
 {

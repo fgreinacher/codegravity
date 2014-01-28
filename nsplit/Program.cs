@@ -7,10 +7,9 @@ using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
-using System.Xml;
-using nsplit.Analyzer;
-using nsplit.DataStructures;
-using nsplit.DataStructures.Tree;
+using nsplit.CodeAnalyzis;
+using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
+using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 using nsplit.Helper;
 
 namespace nsplit

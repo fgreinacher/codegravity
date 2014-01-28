@@ -2,7 +2,8 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using nsplit;
-using nsplit.Analyzer;
+using nsplit.CodeAnalyzis;
+using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 
 namespace Gma.CodeGravity.Tests
 {
@@ -16,7 +17,7 @@ namespace Gma.CodeGravity.Tests
             var calls = typeA.Calls().ToArray();
             Assert.AreEqual(1, calls.Length);
             var call = calls[0];
-            Assert.AreEqual(call.DependencyKind, DependencyKind.MethodCall);
+            Assert.AreEqual(call.Kind, DependencyKind.MethodCall);
         }
     }
 }

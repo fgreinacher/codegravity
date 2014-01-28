@@ -3,14 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using AutoMapper;
-using nsplit.Analyzer;
 using nsplit.Api.Dto;
-using nsplit.DataStructures.Graph;
+using nsplit.CodeAnalyzis;
+using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 
 namespace nsplit.Api
 {
     public class DependenciesController : ApiController
     {
+        static DependenciesController()
+        {
+            CrateMappings();
+        }
+
+        private static void CrateMappings()
+        {
+            Mapper.CreateMap<Type, VertexDto>().ConvertUsing(t => new VertexDto {Name = t.FullName});
+            Mapper.CreateMap<Dependecy, EdgeDto>();
+        }
+
         public IEnumerable<EdgeDto> GetEdgesByNode(string node)
         {
             Type type;
@@ -24,16 +35,13 @@ namespace nsplit.Api
                     .Select(Mapper.DynamicMap<EdgeDto>);
         }
 
-        private static IEnumerable<Edge> GetDependencies(Type type)
+        private static IEnumerable<Dependecy> GetDependencies(Type type)
         {
-            IEnumerable<Dependecy> dependecies = type.Dependecies();
-            foreach (Dependecy dependecy in dependecies)
-            {
-                if (dependecy.To.FullName==null || !Program.Types.ContainsKey(dependecy.To.FullName)) continue;
-                var source = new Vertex {Name = dependecy.From.FullName};
-                var target = new Vertex {Name = dependecy.To.FullName};
-                yield return new Edge {Source = source, Target = target, Kind = dependecy.DependencyKind};
-            }
+            return 
+                type
+                    .Dependecies()
+                    .Where(d => d.Target.FullName != null) //TODO: This is workaround against IEnumerable<T> Must find a gracefulls way
+                    .Where(d=>Program.Types.ContainsKey(d.Target.FullName));
         }
 
         public IEnumerable<VertexDto> GetNodes()
@@ -41,7 +49,6 @@ namespace nsplit.Api
             return Program
                 .Types
                 .Values
-                .Select(type => new Vertex {Name = type.FullName})
                 .Select(Mapper.DynamicMap<VertexDto>);
         }
     }

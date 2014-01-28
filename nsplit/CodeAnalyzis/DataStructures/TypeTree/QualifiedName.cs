@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace nsplit.DataStructures.Tree
+namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
 {
     public class QualifiedName
     {

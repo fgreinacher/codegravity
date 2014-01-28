@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using nsplit.DataStructures;
-using nsplit.DataStructures.Tree;
+using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
-namespace nsplit.Analyzer
+namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 {
     internal class TypeTreeBuilder
     {
