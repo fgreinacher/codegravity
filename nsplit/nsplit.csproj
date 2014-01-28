@@ -69,7 +69,7 @@
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\TypeTreeBuilder.cs" />
     <Compile Include="Api\DependenciesController.cs" />
-    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Dependecy.cs" />
+    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Dependency.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependencyKind.cs" />
     <Compile Include="Api\Dto\EdgeDto.cs" />
     <Compile Include="Api\Dto\VertexDto.cs" />

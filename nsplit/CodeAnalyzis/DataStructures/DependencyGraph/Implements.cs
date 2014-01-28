@@ -2,7 +2,7 @@
 
 namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 {
-    public class Implements : Dependecy
+    public class Implements : Dependency
     {
         public Implements(Type source, Type target)
             : base(source, target)

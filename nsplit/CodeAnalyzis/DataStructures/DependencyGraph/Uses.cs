@@ -2,7 +2,7 @@
 
 namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 {
-    public class Uses : Dependecy
+    public class Uses : Dependency
     {
         public Uses(Type source, Type target)
             : base(source, target)

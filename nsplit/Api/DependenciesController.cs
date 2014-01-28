@@ -19,7 +19,7 @@ namespace nsplit.Api
         private static void CrateMappings()
         {
             Mapper.CreateMap<Type, VertexDto>().ConvertUsing(t => new VertexDto {Name = t.FullName});
-            Mapper.CreateMap<Dependecy, EdgeDto>();
+            Mapper.CreateMap<Dependency, EdgeDto>();
         }
 
         public IEnumerable<EdgeDto> GetEdgesByNode(string node)
@@ -35,7 +35,7 @@ namespace nsplit.Api
                     .Select(Mapper.DynamicMap<EdgeDto>);
         }
 
-        private static IEnumerable<Dependecy> GetDependencies(Type type)
+        private static IEnumerable<Dependency> GetDependencies(Type type)
         {
             return 
                 type

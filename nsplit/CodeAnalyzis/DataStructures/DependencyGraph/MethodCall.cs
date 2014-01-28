@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 {
-    public class MethodCall : Dependecy
+    public class MethodCall : Dependency
     {
         private readonly MethodBase m_Method;
 

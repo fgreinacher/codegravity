@@ -30,10 +30,10 @@ namespace nsplit.CodeAnalyzis
                     .Calls();
         }
 
-        public static IEnumerable<Dependecy> Dependecies(this Type type)
+        public static IEnumerable<Dependency> Dependecies(this Type type)
         {
             Console.WriteLine("START: [{0}] ...", type);
-            IEnumerable<Dependecy> result =
+            IEnumerable<Dependency> result =
                 type.Implements()
                     .Concat(type.Uses())
                     .Concat(type.Calls());
@@ -41,7 +41,7 @@ namespace nsplit.CodeAnalyzis
             return result;
         }
 
-        private static IEnumerable<Dependecy> Implements(this Type type)
+        private static IEnumerable<Dependency> Implements(this Type type)
         {
             Console.WriteLine("Implements of type [{0}] ...", type);
             return
@@ -58,7 +58,7 @@ namespace nsplit.CodeAnalyzis
                     : Enumerable.Repeat(element, 1);
         }
 
-        public static IEnumerable<Dependecy> Calls(this Type type)
+        public static IEnumerable<Dependency> Calls(this Type type)
         {
             Console.WriteLine("Calls of type [{0}] ...", type);
             return
@@ -93,7 +93,7 @@ namespace nsplit.CodeAnalyzis
             return type.GetFields(flags);
         }
 
-        public static IEnumerable<Dependecy> Uses(this Type type)
+        public static IEnumerable<Dependency> Uses(this Type type)
         {
             Console.WriteLine("Uses of type [{0}] ...", type);
             IEnumerable<Type> fieldUses =

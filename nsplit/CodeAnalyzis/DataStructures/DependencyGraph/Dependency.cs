@@ -2,12 +2,12 @@
 
 namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 {
-    public abstract class Dependecy
+    public abstract class Dependency
     {
         private readonly Type m_Source;
         private readonly Type m_Target;
 
-        protected Dependecy(Type source, Type target)
+        protected Dependency(Type source, Type target)
         {
             m_Source = Unnest(source);
             m_Target = Unnest(target);
@@ -43,7 +43,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 
         public override bool Equals(object obj)
         {
-            var other = obj as Dependecy;
+            var other = obj as Dependency;
             return other != null &&
                    other.Source == Source &&
                    other.Target == Target &&
