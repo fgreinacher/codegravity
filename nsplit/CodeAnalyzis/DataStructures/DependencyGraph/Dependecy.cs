@@ -25,7 +25,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
             get { return m_Source; }
         }
 
-        protected static Type Unnest(Type type)
+        private static Type Unnest(Type type)
         {
             if (type.IsNested && type.DeclaringType != null) return Unnest(type.DeclaringType);
             return type;
@@ -34,6 +34,20 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
         public override string ToString()
         {
             return string.Format("{0,20} => {1,-20}", Source.Name, Target.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return Source.GetHashCode() ^ Target.GetHashCode() ^ Kind.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as Dependecy;
+            return other != null &&
+                   other.Source == Source &&
+                   other.Target == Target &&
+                   other.Kind == Kind;
         }
     }
 }

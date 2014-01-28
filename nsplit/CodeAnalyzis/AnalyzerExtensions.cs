@@ -41,7 +41,7 @@ namespace nsplit.CodeAnalyzis
             return result;
         }
 
-        public static IEnumerable<Dependecy> Implements(this Type type)
+        private static IEnumerable<Dependecy> Implements(this Type type)
         {
             Console.WriteLine("Implements of type [{0}] ...", type);
             return
@@ -50,7 +50,7 @@ namespace nsplit.CodeAnalyzis
                     .Select(baseType => new Implements(type, baseType));
         }
 
-        private static IEnumerable<T> Once<T>(T element) where T : class 
+        private static IEnumerable<T> Once<T>(T element) where T : class
         {
             return
                 element == null
@@ -99,7 +99,8 @@ namespace nsplit.CodeAnalyzis
             IEnumerable<Type> fieldUses =
                 type
                     .Fields()
-                    .Select(field => field.FieldType);
+                    .Select(field => field.FieldType)
+                    .SelectMany(x => x.WithGenericTypeArguments());
 
             IEnumerable<Type> methodUses =
                 type
@@ -110,6 +111,13 @@ namespace nsplit.CodeAnalyzis
                 fieldUses
                     .Concat(methodUses)
                     .Select(to => new Uses(type, to));
+        }
+
+        private static IEnumerable<Type> WithGenericTypeArguments(this Type type)
+        {
+            return type.IsConstructedGenericType
+                ? Once(type.GetGenericTypeDefinition()).Concat(type.GenericTypeArguments)
+                : Once(type);
         }
 
         private static IEnumerable<Type> UsedTypes(this MethodInfo method)
