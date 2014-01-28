@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
@@ -24,7 +23,7 @@ namespace nsplit
         private static void Main(string[] args)
         {
             Types = new Dictionary<string, Type>();
-            Assembly assembly = typeof(XmlReader).Assembly;
+            Assembly assembly = typeof(Program).Assembly;
             foreach (Type type in assembly.Types().Take(30))
             {
                 Types.Add(type.FullName, type);
@@ -37,15 +36,16 @@ namespace nsplit
             //-----------------------------------------
 
 
-
             var config = new HttpSelfHostConfiguration("http://localhost:8080");
 
-            var currentExePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "html");
+            string webFolder = Path.Combine(GetExePath(), "html");
 
-            Func<HttpRequestMessage, bool> matchesAllExceptApi = request => !request.RequestUri.AbsolutePath.StartsWith("/api/");
+            Func<HttpRequestMessage, bool> matchesAllExceptApi =
+                request => !request.RequestUri.AbsolutePath.StartsWith("/api/");
+
             var webServerOnFolder = new WebServerOnFolder(
-                matchesAllExceptApi, 
-                currentExePath,
+                matchesAllExceptApi,
+                webFolder,
                 FileType.Html,
                 FileType.Css,
                 FileType.Javascript,
@@ -54,14 +54,9 @@ namespace nsplit
 
             config.MessageHandlers.Add(webServerOnFolder);
             config.Routes.MapHttpRoute(
-                "API", 
+                "API",
                 "api/{controller}/{id}",
                 new {id = RouteParameter.Optional});
-
-            //Reomove XML to see JSON in Browser
-            MediaTypeHeaderValue appXmlType =
-                config.Formatters.XmlFormatter.SupportedMediaTypes.FirstOrDefault(t => t.MediaType == "application/xml");
-            config.Formatters.XmlFormatter.SupportedMediaTypes.Remove(appXmlType);
 
             using (var server = new HttpSelfHostServer(config))
             {
@@ -79,6 +74,11 @@ namespace nsplit
                 Console.WriteLine("Press any key to quit.");
                 Console.ReadKey();
             }
+        }
+
+        private static string GetExePath()
+        {
+            return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
     }
 }

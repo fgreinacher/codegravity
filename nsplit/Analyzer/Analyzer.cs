@@ -1,7 +1,9 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using ClrTest.Reflection;
 
 namespace nsplit.Analyzer
@@ -12,7 +14,8 @@ namespace nsplit.Analyzer
         {
             return
                 assembly
-                    .GetTypes();
+                    .GetTypes()
+                    .Where(t=>!t.IsCompilerGenerated());
         }
 
         private static IEnumerable<MethodBase> MethodCalls(this MethodInfo methodInfo)
@@ -128,6 +131,11 @@ namespace nsplit.Analyzer
                 .Where(instr => instr != null)
                 .Select(instr => instr.Method)
                 .Where(call => !call.IsPrivate);
+        }
+
+        private static bool IsCompilerGenerated(this Type type)
+        {
+            return type.GetCustomAttribute<CompilerGeneratedAttribute>() != null;
         }
     }
 }
