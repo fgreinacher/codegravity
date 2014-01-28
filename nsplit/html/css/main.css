@@ -1,4 +1,20 @@
 ﻿body {
     font-family: Arial;
     font-size: smaller;
+    margin:0;     /* This is used to reset any browser-default margins */
+    height:100vh; /* This is needed to overcome a Chrome bug. */
+    width:100vw;  /* As above. */
+}
+
+#typetree {
+    width: 25vw;
+    height:100vh;
+    float: right;
+    overflow-y: scroll;
+}
+
+#viewport {
+    width: 75vw;
+    height:100vh;
+    float: left;
 }

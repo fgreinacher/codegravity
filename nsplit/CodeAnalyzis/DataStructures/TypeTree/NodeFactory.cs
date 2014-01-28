@@ -21,17 +21,11 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
             return m_NodesById.TryGetValue(id, out node);
         }
 
-        internal Node CreateNode(string name)
+        public Node CreateNode(string name)
         {
             var node = new Node(name, _globalCounter);
             RegisterNode(node);
             return node;
-        }
-
-        private void RegisterNode(NodeBase node)
-        {
-            m_NodesById.Add(_globalCounter, node);
-            _globalCounter++;
         }
 
         public Leaf CreateLeaf(string name)
@@ -39,6 +33,12 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
             var leaf = new Leaf(name, _globalCounter);
             RegisterNode(leaf);
             return leaf;
+        }
+
+        private void RegisterNode(NodeBase node)
+        {
+            m_NodesById.Add(_globalCounter, node);
+            _globalCounter++;
         }
     }
 }

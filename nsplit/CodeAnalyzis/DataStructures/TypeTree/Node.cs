@@ -54,5 +54,19 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
         {
             return m_Leafs.TryGetValue(leaf, out node);
         }
+
+        public bool TryGetNode(Queue<string> nodeNames, out Node node)
+        {
+            if (nodeNames.Count == 0)
+            {
+                node = this;
+                return true;
+            }
+
+            var name = nodeNames.Dequeue();
+            bool isOk = m_ChildNodes.TryGetValue(name, out node);
+            if (!isOk) {return false;}
+            return node.TryGetNode(nodeNames, out node);
+        }
     }
 }

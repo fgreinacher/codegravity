@@ -1,26 +1,29 @@
 ﻿
-(function ($) {
-    
-    var Renderer = function(canvas) {
+(function($) {
+
+    var renderer = function(elt) {
 
         var strokeStyles = {
-            "Implements":"rgba(255,0,0, .333)",
-            "Uses":"rgba(0,255,0, .333)",
+            "Implements": "rgba(255,0,0, .333)",
+            "Uses": "rgba(0,255,0, .333)",
             "Calls": "rgba(0,0,255, .333)"
         };
-        
-        var canvas = $(canvas).get(0);
+
+        var canvas = $(elt).get(0);
         var ctx = canvas.getContext("2d");
         var particleSystem;
         var that = {
             init: function(system) {
+
                 particleSystem = system;
-                // TODO: Real diminsions und resizability 
-                // inform the system of the screen dimensions so it can map coords for us.
-                // if the canvas is ever resized, screenSize should be called again with
-                // the new dimensions
-                particleSystem.screenSize(canvas.width, canvas.height);
-                particleSystem.screenPadding(80); // leave an extra 80px of whitespace per side
+
+                system.screen({
+                    size: { width: canvas.width, height: canvas.height },
+                    padding: [20, 20, 20, 20]
+                });
+
+                $(window).resize(that.resize);
+                that.resize();
                 that.initMouseHandling();
             },
 
@@ -78,6 +81,15 @@
                 });
             },
 
+            resize: function() {
+                canvas.width = .75 * $(window).width();
+                canvas.height = $(window).height();
+                particleSystem.screen({
+                    size: { width: canvas.width, height: canvas.height }
+                });
+                that.redraw();
+            },
+
             initMouseHandling: function() {
                 // no-nonsense drag and drop (thanks springy.js)
                 var dragged = null;
@@ -129,19 +141,40 @@
     };
 
     $(document).ready(function() {
+
+
+        $('#typetree')
+            .jstree({
+                'core': {
+                    'data': {
+                        'url': function(node) {
+                            return node.id === '#' ?
+                                '/api/treeview/children' :
+                                '/api/treeview/children';
+                        },
+                        'data': function(node) {
+                            return { 'id': node.id };
+                        }
+                    }
+                }
+            });
+
         var sys = arbor.ParticleSystem(1000, 600, 0.5); // create the system with sensible repulsion/stiffness/friction
         sys.parameters({ gravity: true }); // use center-gravity to make the graph settle nicely (ymmv)
-        sys.renderer = Renderer("#viewport"); // our newly created renderer will have its .init() method called shortly by sys...
+        sys.renderer = renderer("#viewport"); // our newly created renderer will have its .init() method called shortly by sys...
 
         $.getJSON("api/dependencies/nodes", function(types) {
             $.each(types, function(idx, type) {
                 sys.addNode(type.name);
             });
 
-            $.each(types, function(idx, node) {
+            $.each(types, function(nidx, node) {
                 $.getJSON("api/dependencies/edges?node=" + node.name, function(edges) {
-                    $.each(edges, function(idx, edge) {
-                        sys.addEdge(edge.source.name, edge.target.name, { length: 5, kind: edge.kind });
+                    $.each(edges, function(eidx, edge) {
+                        sys.addEdge(
+                            edge.source.name,
+                            edge.target.name,
+                            { length: 5, kind: edge.kind });
                     });
                 });
             });

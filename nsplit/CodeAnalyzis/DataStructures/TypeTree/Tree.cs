@@ -1,6 +1,7 @@
 ﻿#region usings
 
 using System.Collections.Generic;
+using System.Runtime.Remoting;
 
 #endregion
 
@@ -37,7 +38,14 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
         {
             var qualifiedName = QualifiedName.Parse(fullName);
             var names = new Queue<string>(qualifiedName.Nodes);
-            var node = m_Root.GetOrCreate(names, m_NodeFactory);
+            Node node;
+            bool nodeFound = m_Root.TryGetNode(names, out node);
+            if (!nodeFound)
+            {
+                leaf = null;
+                return false;
+            }
+
             Leaf result;
             bool isOk = node.TryGetLeaf(qualifiedName.Leaf, out result);
             leaf = result;
