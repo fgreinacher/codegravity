@@ -22,43 +22,18 @@ namespace nsplit.CodeAnalyzis
                     .Where(t => !t.IsCompilerGenerated());
         }
 
-        private static IEnumerable<MethodBase> MethodCalls(this MethodInfo methodInfo)
-        {
-            return
-                MethodBodyInfo
-                    .Create(methodInfo)
-                    .Calls();
-        }
-
-        public static IEnumerable<Dependecy> Dependecies(this Type type)
+        public static IEnumerable<Dependency> Dependecies(this Type type)
         {
             Console.WriteLine("START: [{0}] ...", type);
-            IEnumerable<Dependecy> result =
+            IEnumerable<Dependency> result =
                 type.Implements()
-                    .Concat(type.Uses());
-                    //.Concat(type.Calls()); TODO: Calls are ignored currently
+                    .Concat(type.Uses())
+                    .Concat(type.Calls());
             Console.WriteLine("END: [{0}] ...", type);
             return result;
         }
 
-        public static IEnumerable<Dependecy> Implements(this Type type)
-        {
-            Console.WriteLine("Implements of type [{0}] ...", type);
-            return
-                Once(type.BaseType)
-                    .Concat(type.GetInterfaces())
-                    .Select(baseType => new Implements(type, baseType));
-        }
-
-        private static IEnumerable<T> Once<T>(T element) where T : class 
-        {
-            return
-                element == null
-                    ? Enumerable.Empty<T>()
-                    : Enumerable.Repeat(element, 1);
-        }
-
-        public static IEnumerable<Dependecy> Calls(this Type type)
+        public static IEnumerable<Dependency> Calls(this Type type)
         {
             Console.WriteLine("Calls of type [{0}] ...", type);
             return
@@ -69,6 +44,50 @@ namespace nsplit.CodeAnalyzis
                     .Where(call => call.Target != type && !call.Target.IsNestedPrivate);
         }
 
+        public static IEnumerable<Dependency> Uses(this Type type)
+        {
+            Console.WriteLine("Uses of type [{0}] ...", type);
+            IEnumerable<Type> fieldUses =
+                type
+                    .Fields()
+                    .Select(field => field.FieldType)
+                    .SelectMany(x => x.Unroll());
+
+            IEnumerable<Type> methodUses =
+                type
+                    .Methods()
+                    .SelectMany(method => method.UsedTypes());
+
+            return
+                fieldUses
+                    .Concat(methodUses)
+                    .Select(to => new Uses(type, to));
+        }
+
+        private static IEnumerable<MethodBase> MethodCalls(this MethodInfo methodInfo)
+        {
+            return
+                MethodBodyInfo
+                    .Create(methodInfo)
+                    .Calls();
+        }
+
+        public static IEnumerable<Dependency> Implements(this Type type)
+        {
+            Console.WriteLine("Implements of type [{0}] ...", type);
+            return
+                Once(type.BaseType)
+                    .Concat(type.GetInterfaces())
+                    .Select(baseType => new Implements(type, baseType));
+        }
+
+        private static IEnumerable<T> Once<T>(T element) where T : class
+        {
+            return
+                element == null
+                    ? Enumerable.Empty<T>()
+                    : Enumerable.Repeat(element, 1);
+        }
 
         private static IEnumerable<MethodInfo> Methods(this Type type)
         {
@@ -93,36 +112,25 @@ namespace nsplit.CodeAnalyzis
             return type.GetFields(flags);
         }
 
-        public static IEnumerable<Dependecy> Uses(this Type type)
+        private static IEnumerable<Type> Unroll(this Type type)
         {
-            Console.WriteLine("Uses of type [{0}] ...", type);
-            IEnumerable<Type> fieldUses =
-                type
-                    .Fields()
-                    .Select(field => field.FieldType);
-
-            IEnumerable<Type> methodUses =
-                type
-                    .Methods()
-                    .SelectMany(method => method.UsedTypes());
-
-            return
-                fieldUses
-                    .Concat(methodUses)
-                    .Select(to => new Uses(type, to));
+            return type.IsConstructedGenericType
+                ? Once(type.GetGenericTypeDefinition()).Concat(type.GenericTypeArguments)
+                : Once(type);
         }
 
         private static IEnumerable<Type> UsedTypes(this MethodInfo method)
         {
             IEnumerable<Type> paramTypes = method
                 .GetParameters()
-                .Select(param => param.ParameterType);
+                .SelectMany(param => param.ParameterType.Unroll());
 
             Type[] genericArguments = method
                 .GetGenericArguments();
 
-            return
+            return 
                 Once(method.ReturnType)
+                    .SelectMany(returnType => returnType.Unroll())
                     .Concat(paramTypes)
                     .Concat(genericArguments);
         }

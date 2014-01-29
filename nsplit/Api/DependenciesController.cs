@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Web.Http;
 using AutoMapper;
 using nsplit.Api.Dto;
-using nsplit.CodeAnalyzis;
-using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
 namespace nsplit.Api

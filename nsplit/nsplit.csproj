@@ -74,7 +74,7 @@
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Edge.cs" />
     <Compile Include="CodeAnalyzis\TypeTreeBuilder.cs" />
     <Compile Include="Api\DependenciesController.cs" />
-    <Compile Include="CodeAnalyzis\Dependecy.cs" />
+    <Compile Include="CodeAnalyzis\Dependency.cs" />
     <Compile Include="CodeAnalyzis\DependencyKind.cs" />
     <Compile Include="Api\Dto\EdgeDto.cs" />
     <Compile Include="Api\Dto\VertexDto.cs" />

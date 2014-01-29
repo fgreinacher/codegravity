@@ -2,12 +2,12 @@
 
 namespace nsplit.CodeAnalyzis
 {
-    public abstract class Dependecy
+    public abstract class Dependency
     {
         private readonly Type m_Source;
         private readonly Type m_Target;
 
-        protected Dependecy(Type source, Type target)
+        protected Dependency(Type source, Type target)
         {
             m_Source = Unnest(source);
             m_Target = Unnest(target);

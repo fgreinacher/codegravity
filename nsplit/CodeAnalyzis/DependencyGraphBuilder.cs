@@ -41,23 +41,23 @@ namespace nsplit.CodeAnalyzis
         }
 
 
-        public void Add(Dependecy dependecy)
+        public void Add(Dependency dependency)
         {
             //NOTE: For instance IEnumerable.FullName == null
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (dependecy.Source.FullName==null) return;
+            if (dependency.Source.FullName==null) return;
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (dependecy.Target.FullName==null) return;
+            if (dependency.Target.FullName==null) return;
 
             INode source;
-            bool sourceFound = m_Tree.TryGet(dependecy.Source.FullName, out source);
+            bool sourceFound = m_Tree.TryGet(dependency.Source.FullName, out source);
             if (!sourceFound) return;
 
             INode target;
-            bool targetFound = m_Tree.TryGet(dependecy.Target.FullName, out target);
+            bool targetFound = m_Tree.TryGet(dependency.Target.FullName, out target);
             if (!targetFound) return;
 
-            m_AdjacencyMatrix.Add(source.Id, target.Id, dependecy.Kind);
+            m_AdjacencyMatrix.Add(source.Id, target.Id, dependency.Kind);
         }
 
         public AdjacencyMatrix AdjacencyMatrix
