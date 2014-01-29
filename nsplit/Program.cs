@@ -55,7 +55,7 @@ namespace nsplit
             config.MessageHandlers.Add(webServerOnFolder);
             config.Routes.MapHttpRoute(
                 "API",
-                "api/{controller}/{id}",
+                "api/{controller}/{action}",
                 new {id = RouteParameter.Optional});
 
             using (var server = new HttpSelfHostServer(config))

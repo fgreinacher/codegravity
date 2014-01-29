@@ -19,7 +19,8 @@
 
                 system.screen({
                     size: { width: canvas.width, height: canvas.height },
-                    padding: [20, 20, 20, 20]
+                    padding: [20, 20, 20, 20],
+                    step:.02
                 });
 
                 $(window).resize(that.resize);
@@ -55,9 +56,8 @@
                     //ctx.fillStyle = (node.data.alone) ? "orange" : "black";
                     //ctx.fillRect(pt.x - w / 2, pt.y - w / 2, w, w);
 
-                    // determine the box size and round off the coords if we'll be 
-                    var parts = node.name.split(".");
-                    var label = parts[parts.length - 1];
+
+                    var label = node.data.label;
 
                     var w = ctx.measureText(label || "").width + 6;
 
@@ -142,42 +142,89 @@
 
     $(document).ready(function() {
 
+        var sys = arbor.ParticleSystem();
+        sys.parameters({ stiffness: 900, repulsion: 2000, gravity: true, dt: 0.015 });
+        sys.renderer = renderer("#viewport");
 
-        $('#typetree')
-            .jstree({
-                'core': {
-                    'data': {
-                        'url': function(node) {
-                            return node.id === '#' ?
-                                '/api/treeview/children' :
-                                '/api/treeview/children';
-                        },
-                        'data': function(node) {
-                            return { 'id': node.id };
+            $('#typetree')
+                .on('after_open.jstree', function (e, data) {
+                    var typeTree = data.instance;
+                    var parent = data.node;
+                    var parentVertex = sys.getNode(parent.id);
+                    var x = 0;
+                    var y = 0;
+                    if (parentVertex != null) {
+                        x = parentVertex.p.x;
+                        y = parentVertex.p.y;
+                        sys.pruneNode(parentVertex);
+                    }
+                    var segmentAngle = 2 * Math.PI / parent.children.length;
+                    $.each(parent.children, function (idx, childId) {
+                        var childNode = typeTree.get_node(childId);
+                        var angle = segmentAngle * idx;
+                        var vx = x + .2 * Math.sin(angle);;
+                        var vy = y + .2 * Math.cos(angle);;
+                        sys.addNode(childNode.id, { label: childNode.text, mass: 100, x: vx, y: vy });
+                    });
+                })
+                .on('after_close.jstree', function (e, data) {
+                    var typeTree = data.instance;
+                    var parent = data.node;
+                    var x=0;
+                    var y=0;
+                    var childCount = parent.children.length;
+                    $.each(parent.children, function (idx, childId) {
+                        var childNode = typeTree.get_node(childId);
+                        typeTree.close_node(childNode);
+                        var childVertex = sys.getNode(childId);
+                        x += childVertex.p.x;
+                        y += childVertex.p.y;
+                        sys.pruneNode(childVertex);
+                    });
+                    x = x / childCount;
+                    y = y / childCount;
+                    sys.addNode(parent.id, { label: parent.text, mass: 100, x: x, y: y });
+                })
+                .on('loaded.jstree', function (e, data) {
+                    var typeTree = data.instance;
+                    var rootNode = typeTree.get_node("#");
+                    typeTree.open_node(rootNode);
+                    $.each(rootNode.children, function (idx, childId) {
+                        var childNode = data.instance.get_node(childId);
+                        typeTree.open_node(childNode);
+                    });
+                })
+                .jstree({
+                    'core': {
+                        'data': {
+                            'url': function(node) {
+                                return node.id === '#' ?
+                                    '/api/treeview/children' :
+                                    '/api/treeview/children';
+                            },
+                            'data': function(node) {
+                                return { 'id': node.id };
+                            }
                         }
                     }
-                }
-            });
-
-        var sys = arbor.ParticleSystem(1000, 600, 0.5); // create the system with sensible repulsion/stiffness/friction
-        sys.parameters({ gravity: true }); // use center-gravity to make the graph settle nicely (ymmv)
-        sys.renderer = renderer("#viewport"); // our newly created renderer will have its .init() method called shortly by sys...
-
-        $.getJSON("api/dependencies/nodes", function(types) {
-            $.each(types, function(idx, type) {
-                sys.addNode(type.name);
-            });
-
-            $.each(types, function(nidx, node) {
-                $.getJSON("api/dependencies/edges?node=" + node.name, function(edges) {
-                    $.each(edges, function(eidx, edge) {
-                        sys.addEdge(
-                            edge.source.name,
-                            edge.target.name,
-                            { length: 5, kind: edge.kind });
-                    });
                 });
-            });
-        });
+        
+
+        //$.getJSON("api/dependencies/nodes", function(types) {
+        //    $.each(types, function(idx, type) {
+        //        sys.addNode(type.name);
+        //    });
+
+        //    $.each(types, function(nidx, node) {
+        //        $.getJSON("api/dependencies/edges?node=" + node.name, function(edges) {
+        //            $.each(edges, function(eidx, edge) {
+        //                sys.addEdge(
+        //                    edge.source.name,
+        //                    edge.target.name,
+        //                    { length: 5, kind: edge.kind });
+        //            });
+        //        });
+        //    });
+        //});
     });
 })(this.jQuery)

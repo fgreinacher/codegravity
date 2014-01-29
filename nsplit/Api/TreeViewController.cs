@@ -9,6 +9,18 @@ namespace nsplit.Api
 {
     public class TreeViewController : ApiController
     {
+        [ActionName("node")]
+        public NodeDto GetNode(string id)
+        {
+            int idNo = (id == "#") ? 0 : int.Parse(id);
+
+            INode node;
+            bool isOk = GetTree().TryGet(idNo, out node);
+            if (!isOk) return null;
+            return Mapper.DynamicMap<NodeDto>(node);
+        }
+
+         [ActionName("children")]
         public IEnumerable<NodeDto> GetChildren(string id)
         {
             int idNo = (id == "#") ? 0 : int.Parse(id);
