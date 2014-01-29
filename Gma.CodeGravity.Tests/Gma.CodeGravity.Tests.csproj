@@ -59,6 +59,7 @@
     <Compile Include="TestData\TypeA.cs" />
     <Compile Include="TestData\TypeB.cs" />
     <Compile Include="TestData\TypeC.cs" />
+    <Compile Include="TestData\TypeOfTWithFieldOfIDictionaryTChar.cs" />
     <Compile Include="TestData\TypeWithFieldOfIEnumerableString.cs" />
     <Compile Include="AnalyzerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

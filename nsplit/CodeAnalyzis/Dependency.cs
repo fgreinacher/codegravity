@@ -31,6 +31,15 @@ namespace nsplit.CodeAnalyzis
             return type;
         }
 
+        public override bool Equals(object obj)
+        {
+            var otherDependency = obj as Dependency;
+            return otherDependency != null &&
+                   otherDependency.Source == Source &&
+                   otherDependency.Target == Target &&
+                   otherDependency.Kind == Kind;
+        }
+
         public override string ToString()
         {
             return string.Format("{0,20} => {1,-20}", Source.Name, Target.Name);

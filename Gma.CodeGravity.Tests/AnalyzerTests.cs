@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Gma.CodeGravity.Tests.TestData;
-using nsplit;
 using nsplit.CodeAnalyzis;
-using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 using NUnit.Framework;
 
 namespace Gma.CodeGravity.Tests
@@ -38,6 +35,16 @@ namespace Gma.CodeGravity.Tests
         public void Uses_GenericTypeArgumentInMethodParameter_IsDetected()
         {
             var type = typeof(TypeWithMethodAcceptingIEnumerableOfChar);
+
+            var uses = type.Uses();
+
+            Assert.That(uses, Has.Member(new Uses(type, typeof(char))));
+        }
+
+        [Test]
+        public void Uses_PartiallyConstructedGenericTypeArgumentInField_IsDetected()
+        {
+            var type = typeof(TypeOfTWithFieldOfIDictionaryTChar<>);
 
             var uses = type.Uses();
 
