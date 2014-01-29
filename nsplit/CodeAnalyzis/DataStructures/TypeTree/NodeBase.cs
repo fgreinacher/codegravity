@@ -31,5 +31,17 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
 
         public abstract IEnumerable<INode> Children();
         public abstract bool IsLeaf();
+
+        public IEnumerable<INode> GetLeafsRecursively()
+        {
+            if (IsLeaf()) yield return this;
+            foreach (var child in Children())
+            {
+                foreach (var leaf in child.GetLeafsRecursively())
+                {
+                    yield return leaf;
+                }
+            }
+        } 
     }
 }

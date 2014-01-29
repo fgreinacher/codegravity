@@ -67,14 +67,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
-    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\TypeTreeBuilder.cs" />
+    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\AdjacencyMatrix.cs" />
+    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependecyKindExtensions.cs" />
+    <Compile Include="CodeAnalyzis\DependencyGraphBuilder.cs" />
+    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependencyKinds.cs" />
+    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Edge.cs" />
+    <Compile Include="CodeAnalyzis\TypeTreeBuilder.cs" />
     <Compile Include="Api\DependenciesController.cs" />
-    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Dependecy.cs" />
-    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependencyKind.cs" />
+    <Compile Include="CodeAnalyzis\Dependecy.cs" />
+    <Compile Include="CodeAnalyzis\DependencyKind.cs" />
     <Compile Include="Api\Dto\EdgeDto.cs" />
     <Compile Include="Api\Dto\VertexDto.cs" />
-    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Implements.cs" />
-    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\MethodCall.cs" />
+    <Compile Include="CodeAnalyzis\Implements.cs" />
+    <Compile Include="CodeAnalyzis\MethodCall.cs" />
     <Compile Include="Api\Dto\NodeDto.cs" />
     <Compile Include="Api\TreeViewController.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\INode.cs" />
@@ -91,7 +96,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper\WebServerOnFolder.cs" />
-    <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Uses.cs" />
+    <Compile Include="CodeAnalyzis\Uses.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

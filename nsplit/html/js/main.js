@@ -1,4 +1,5 @@
-﻿
+﻿var showLabels = true;
+
 (function($) {
 
     var renderer = function(elt) {
@@ -19,7 +20,7 @@
 
                 system.screen({
                     size: { width: canvas.width, height: canvas.height },
-                    padding: [20, 20, 20, 20],
+                    padding: [50, 50, 50, 50],
                     step:.02
                 });
 
@@ -56,8 +57,7 @@
                     //ctx.fillStyle = (node.data.alone) ? "orange" : "black";
                     //ctx.fillRect(pt.x - w / 2, pt.y - w / 2, w, w);
 
-
-                    var label = node.data.label;
+                    var label = showLabels ? node.data.label : "x";
 
                     var w = ctx.measureText(label || "").width + 6;
 
@@ -143,8 +143,33 @@
     $(document).ready(function() {
 
         var sys = arbor.ParticleSystem();
-        sys.parameters({ stiffness: 900, repulsion: 2000, gravity: true, dt: 0.015 });
+        sys.parameters({
+            repulsion: 1000,
+            stiffness: 600,
+            friction: 0.5,
+            fps: 55,
+            dt: 0.02,
+            precision: 0.6,
+            gravity: true
+        });
+        
         sys.renderer = renderer("#viewport");
+        sys.addVertex = function(treeNode, x, y) {
+            sys.addNode(treeNode.id, { label: treeNode.text, x: x, y: y });
+            $.getJSON("api/dependencies/edges?id=" + treeNode.id, function(edges) {
+                $.each(edges, function(eidx, edge) {
+                    var exist = sys.getNode(edge.target);
+                    //TODO: Find visible parent !
+                    if (exist) {
+                        sys.addEdge(
+                            edge.source,
+                            edge.target,
+                            { kind: edge.kind });
+                    }
+                });
+            });
+        };
+
 
             $('#typetree')
                 .on('after_open.jstree', function (e, data) {
@@ -164,7 +189,7 @@
                         var angle = segmentAngle * idx;
                         var vx = x + .2 * Math.sin(angle);;
                         var vy = y + .2 * Math.cos(angle);;
-                        sys.addNode(childNode.id, { label: childNode.text, mass: 100, x: vx, y: vy });
+                        sys.addVertex(childNode, vx, vy);
                     });
                 })
                 .on('after_close.jstree', function (e, data) {
@@ -183,7 +208,7 @@
                     });
                     x = x / childCount;
                     y = y / childCount;
-                    sys.addNode(parent.id, { label: parent.text, mass: 100, x: x, y: y });
+                    sys.addVertex(parent, x, y);
                 })
                 .on('loaded.jstree', function (e, data) {
                     var typeTree = data.instance;

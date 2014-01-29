@@ -1,55 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web.Http;
 using AutoMapper;
 using nsplit.Api.Dto;
 using nsplit.CodeAnalyzis;
 using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
+using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
 namespace nsplit.Api
 {
     public class DependenciesController : ApiController
     {
-        static DependenciesController()
+        [ActionName("edges")]
+        public IEnumerable<EdgeDto> GetEdges(string id)
         {
-            CrateMappings();
-        }
-
-        private static void CrateMappings()
-        {
-            Mapper.CreateMap<Type, VertexDto>().ConvertUsing(t => new VertexDto {Name = t.FullName});
-            Mapper.CreateMap<Dependecy, EdgeDto>();
-        }
-
-        public IEnumerable<EdgeDto> GetEdgesByNode(string node)
-        {
-            Type type;
-            if (!Program.Types.TryGetValue(node, out type))
+            int idNo = (id == "#") ? 0 : int.Parse(id);
+            INode node;
+            if (!Program.TypeTree.TryGet(idNo, out node))
             {
                 return Enumerable.Empty<EdgeDto>();
             }
 
-            return 
-                GetDependencies(type)
-                    .Select(Mapper.DynamicMap<EdgeDto>);
-        }
-
-        private static IEnumerable<Dependecy> GetDependencies(Type type)
-        {
-            return 
-                type
-                    .Dependecies()
-                    .Where(d => d.Target.FullName != null) //TODO: This is workaround against IEnumerable<T> Must find a gracefulls way
-                    .Where(d=>Program.Types.ContainsKey(d.Target.FullName));
-        }
-
-        public IEnumerable<VertexDto> GetNodes()
-        {
-            return Program
-                .Types
-                .Values
-                .Select(Mapper.DynamicMap<VertexDto>);
+            return Program.DependencyGraph.All(node).Select(Mapper.DynamicMap<EdgeDto>);
         }
     }
 }

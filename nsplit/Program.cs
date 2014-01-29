@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
+using System.Xml;
 using nsplit.CodeAnalyzis;
 using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
@@ -16,23 +17,22 @@ namespace nsplit
 {
     internal class Program
     {
-        public static Dictionary<string, Type> Types;
+        public static AdjacencyMatrix DependencyGraph;
         public static Tree TypeTree;
 
 
         private static void Main(string[] args)
         {
-            Types = new Dictionary<string, Type>();
             Assembly assembly = typeof(Program).Assembly;
-            foreach (Type type in assembly.Types().Take(30))
-            {
-                Types.Add(type.FullName, type);
-            }
 
             //-----------------------------------------
             var typeTreeBuilder = new TypeTreeBuilder();
             typeTreeBuilder.Add(assembly);
             TypeTree = typeTreeBuilder.Tree;
+
+            var dependen = new DependencyGraphBuilder(TypeTree);
+            dependen.Add(assembly);
+            DependencyGraph = dependen.AdjacencyMatrix;
             //-----------------------------------------
 
 

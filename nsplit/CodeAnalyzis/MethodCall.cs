@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
+namespace nsplit.CodeAnalyzis
 {
     public class MethodCall : Dependecy
     {

@@ -9,7 +9,7 @@ namespace nsplit.Api.Dto
     [DataContract(Name = "node")]
     public class VertexDto
     {
-        [DataMember(Name = "name")]
-        public string Name { get; set; }
+        [DataMember(Name = "id")]
+        public string Id { get; set; }
     }
 }

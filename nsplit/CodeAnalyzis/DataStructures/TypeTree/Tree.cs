@@ -51,5 +51,13 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
             leaf = result;
             return isOk;
         }
+
+        public int Count
+        {
+            get
+            {
+                return m_NodeFactory.Counter;
+            }
+        }
     }
 }

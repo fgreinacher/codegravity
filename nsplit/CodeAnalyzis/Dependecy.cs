@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
+namespace nsplit.CodeAnalyzis
 {
     public abstract class Dependecy
     {

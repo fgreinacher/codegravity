@@ -35,8 +35,8 @@ namespace nsplit.CodeAnalyzis
             Console.WriteLine("START: [{0}] ...", type);
             IEnumerable<Dependecy> result =
                 type.Implements()
-                    .Concat(type.Uses())
-                    .Concat(type.Calls());
+                    .Concat(type.Uses());
+                    //.Concat(type.Calls()); TODO: Calls are ignored currently
             Console.WriteLine("END: [{0}] ...", type);
             return result;
         }

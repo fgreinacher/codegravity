@@ -2,7 +2,7 @@
 using System.Reflection;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
-namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
+namespace nsplit.CodeAnalyzis
 {
     internal class TypeTreeBuilder
     {
