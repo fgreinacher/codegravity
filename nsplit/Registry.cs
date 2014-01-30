@@ -8,43 +8,30 @@ using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
 namespace nsplit
 {
-    internal class Registry
+    internal static class Registry
     {
-        private static AdjacencyMatrix _dependencyGraph;
-        private static Tree _typeTree;
-        private static INode[] _typesById;
+        private static DependencyGraph _instance;
+
+        public static void Build(Assembly assembly)
+        {
+            _instance = DependencyGraph.StartBuildAsync(assembly);
+        }
 
         public static INode GetNode(string id)
         {
             int idNo = (id == "#") ? 0 : Int32.Parse(id);
-            return GetNode(idNo);
+            return _instance.GetNode(idNo);
         }
 
         public static INode GetNode(int idNo)
         {
-            return _typesById[idNo];
-        }
-
-        public static void BuildUp(Assembly assembly)
-        {
-            var typeTreeBuilder = new TypeTreeBuilder();
-            typeTreeBuilder.Add(assembly);
-            _typeTree = typeTreeBuilder.Tree;
-
-            _typesById = _typeTree.Nodes.Reverse().ToArray();
-
-            var dependen = new DependencyGraphBuilder(_typeTree);
-            dependen.Add(assembly);
-            _dependencyGraph = dependen.AdjacencyMatrix;
+            return _instance.GetNode(idNo);
         }
 
         public static IEnumerable<Edge> InOut(string id)
         {
-            INode node = GetNode(id);
-            var allLeafs = node.Leafs().ToArray();
-            var outDeps = allLeafs.SelectMany(n => _dependencyGraph.Out(node.Id));
-            var inDeps = allLeafs.SelectMany(n => _dependencyGraph.In(node.Id));
-            return outDeps.Concat(inDeps).SelectMany(e => e.FlattenFlags()).Distinct();
+            return _instance.InOut(id);
         }
+
     }
 }

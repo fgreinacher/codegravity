@@ -1,12 +1,15 @@
 ﻿#region usings
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
+using System.Xml;
 using nsplit.Helper;
 
 #endregion
@@ -17,9 +20,12 @@ namespace nsplit
     {
         private static void Main(string[] args)
         {
-            Assembly assembly = typeof (Program).Assembly;
+            //RegisterFolderResolver(folderPath);
+            //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
 
-            Registry.BuildUp(assembly);
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            Registry.Build(assembly);
 
             var config = new HttpSelfHostConfiguration("http://localhost:8080");
 
@@ -59,6 +65,22 @@ namespace nsplit
                 Console.WriteLine("Press any key to quit.");
                 Console.ReadKey();
             }
+        }
+
+        private static void RegisterFolderResolver(string folderPath)
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
+            {
+                var name = resolveArgs.Name;
+                var fileName = name.Substring(0, name.IndexOf(',')) + ".dll";
+
+                string fullPath = Path.Combine(folderPath, fileName);
+                if (!File.Exists(fullPath))
+                {
+                    return null;
+                }
+                return Assembly.LoadFile(fullPath);
+            };
         }
 
         private static string GetExePath()

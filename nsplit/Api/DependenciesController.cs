@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿#region usings
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using nsplit.Api.Dto;
+
+#endregion
 
 namespace nsplit.Api
 {
@@ -10,10 +14,10 @@ namespace nsplit.Api
         [ActionName("edges")]
         public IEnumerable<EdgeDto> GetEdges(string id)
         {
-            return 
+            return
                 Registry
                     .InOut(id)
-                    .Select(edge=>new EdgeDto()
+                    .Select(edge => new EdgeDto
                     {
                         Kinds = edge.Kinds.ToString(),
                         Sources = Path(edge.Source),
@@ -26,7 +30,7 @@ namespace nsplit.Api
             return Registry
                 .GetNode(id)
                 .Path()
-                .Select(n=>n.Id);
+                .Select(n => n.Id);
         }
     }
 }

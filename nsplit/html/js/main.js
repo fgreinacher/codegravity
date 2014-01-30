@@ -239,23 +239,5 @@
                         }
                     }
                 });
-        
-
-        //$.getJSON("api/dependencies/nodes", function(types) {
-        //    $.each(types, function(idx, type) {
-        //        sys.addNode(type.name);
-        //    });
-
-        //    $.each(types, function(nidx, node) {
-        //        $.getJSON("api/dependencies/edges?node=" + node.name, function(edges) {
-        //            $.each(edges, function(eidx, edge) {
-        //                sys.addEdge(
-        //                    edge.source.name,
-        //                    edge.target.name,
-        //                    { length: 5, kind: edge.kind });
-        //            });
-        //        });
-        //    });
-        //});
     });
 })(this.jQuery)
