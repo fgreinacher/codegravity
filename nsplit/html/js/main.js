@@ -1,4 +1,4 @@
-﻿var showLabels = false;
+﻿var showLabels = true;
 
 (function($) {
 

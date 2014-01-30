@@ -22,12 +22,11 @@ namespace nsplit
             _currentProgress = 0;
             _instance.OnProgress += (sender, e) =>
             {
-                if (e.Actual == 0) { Console.WriteLine();}
-
                 int progress = (e.Actual*100/e.Max);
                 if (_currentProgress == progress) return;
                 Console.Write("\r{0,10} :\t{1}%", e.TaskName, progress);
                 _currentProgress = progress;
+                if (progress == 100) { Console.WriteLine(); }
             };
         }
 

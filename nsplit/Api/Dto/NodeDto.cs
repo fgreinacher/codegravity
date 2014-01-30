@@ -2,6 +2,12 @@
 
 namespace nsplit.Api.Dto
 {
+
+    public class DeepNodeDto
+    {
+        
+    }
+
     [DataContract]
     public class NodeDto
     {
