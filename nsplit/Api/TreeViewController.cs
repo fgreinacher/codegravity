@@ -12,31 +12,19 @@ namespace nsplit.Api
         [ActionName("node")]
         public NodeDto GetNode(string id)
         {
-            int idNo = (id == "#") ? 0 : int.Parse(id);
-
-            INode node;
-            bool isOk = GetTree().TryGet(idNo, out node);
-            if (!isOk) return null;
+            var node = Registry.GetNode(id);
             return Mapper.DynamicMap<NodeDto>(node);
         }
 
-         [ActionName("children")]
+        [ActionName("children")]
         public IEnumerable<NodeDto> GetChildren(string id)
         {
-            int idNo = (id == "#") ? 0 : int.Parse(id);
-
-            INode parent;
-            bool isOk = GetTree().TryGet(idNo, out parent);
-            if (!isOk) return Enumerable.Empty<NodeDto>();
-            return 
+            INode parent = Registry.GetNode(id);
+            
+             return 
                 parent
                     .Children()
                     .Select(Mapper.DynamicMap<NodeDto>);
-        }
-
-        private Tree GetTree()
-        {
-            return Program.TypeTree;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
 {
     internal class Leaf : NodeBase
     {
-        public Leaf(string name, int id) : base(name, id)
+        public Leaf(string name, int id, Node node) : base(name, id, node)
         {
         }
 

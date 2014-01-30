@@ -48,13 +48,5 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
                 yield return new Edge(i, id, value);
             }
         }
-
-        public IEnumerable<Edge> All(INode node)
-        {
-            var allLeafs = node.GetLeafsRecursively().ToArray();
-            var outDeps = allLeafs.SelectMany(n => Program.DependencyGraph.Out(node.Id));
-            var inDeps = allLeafs.SelectMany(n => Program.DependencyGraph.In(node.Id));
-            return outDeps.Concat(inDeps).SelectMany(e => e.FlattenFlags()).Distinct();
-        }
     }
 }

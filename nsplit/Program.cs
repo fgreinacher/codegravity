@@ -1,40 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#region usings
+
+using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
-using System.Xml;
-using nsplit.CodeAnalyzis;
-using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
-using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 using nsplit.Helper;
+
+#endregion
 
 namespace nsplit
 {
     internal class Program
     {
-        public static AdjacencyMatrix DependencyGraph;
-        public static Tree TypeTree;
-
-
         private static void Main(string[] args)
         {
-            Assembly assembly = typeof(Program).Assembly;
+            Assembly assembly = typeof (Program).Assembly;
 
-            //-----------------------------------------
-            var typeTreeBuilder = new TypeTreeBuilder();
-            typeTreeBuilder.Add(assembly);
-            TypeTree = typeTreeBuilder.Tree;
-
-            var dependen = new DependencyGraphBuilder(TypeTree);
-            dependen.Add(assembly);
-            DependencyGraph = dependen.AdjacencyMatrix;
-            //-----------------------------------------
-
+            Registry.BuildUp(assembly);
 
             var config = new HttpSelfHostConfiguration("http://localhost:8080");
 

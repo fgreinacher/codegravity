@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Web.Http;
-using AutoMapper;
 using nsplit.Api.Dto;
-using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
 namespace nsplit.Api
 {
@@ -13,14 +10,23 @@ namespace nsplit.Api
         [ActionName("edges")]
         public IEnumerable<EdgeDto> GetEdges(string id)
         {
-            int idNo = (id == "#") ? 0 : int.Parse(id);
-            INode node;
-            if (!Program.TypeTree.TryGet(idNo, out node))
-            {
-                return Enumerable.Empty<EdgeDto>();
-            }
+            return 
+                Registry
+                    .InOut(id)
+                    .Select(edge=>new EdgeDto()
+                    {
+                        Kinds = edge.Kinds.ToString(),
+                        Sources = Path(edge.Source),
+                        Targets = Path(edge.Target)
+                    });
+        }
 
-            return Program.DependencyGraph.All(node).Select(Mapper.DynamicMap<EdgeDto>);
+        private static IEnumerable<int> Path(int id)
+        {
+            return Registry
+                .GetNode(id)
+                .Path()
+                .Select(n=>n.Id);
         }
     }
 }

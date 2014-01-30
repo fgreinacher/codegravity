@@ -154,18 +154,24 @@
         });
         
         sys.renderer = renderer("#viewport");
+        sys.getVertex = function(path) {
+            for (var i = 0; i < path.length; i++) {
+                var firstVisible = sys.getNode(path[i]);
+                if (firstVisible != null) return firstVisible;
+            }
+            return null;
+        };
         sys.addVertex = function(treeNode, x, y) {
             sys.addNode(treeNode.id, { label: treeNode.text, x: x, y: y });
             $.getJSON("api/dependencies/edges?id=" + treeNode.id, function(edges) {
-                $.each(edges, function(eidx, edge) {
-                    var exist = sys.getNode(edge.target);
-                    //TODO: Find visible parent !
-                    if (exist) {
-                        sys.addEdge(
-                            edge.source,
-                            edge.target,
-                            { kind: edge.kind });
-                    }
+                $.each(edges, function (eidx, edge) {
+
+                    var source = sys.getVertex(edge.sources);
+                    var target = sys.getVertex(edge.targets);
+                    sys.addEdge(
+                        source,
+                        target,
+                        { kind: edge.kind });
                 });
             });
         };

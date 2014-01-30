@@ -90,6 +90,7 @@
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeFactory.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\QualifiedName.cs" />
     <Compile Include="Helper\FileType.cs" />
+    <Compile Include="Registry.cs" />
     <None Include="html\css\main.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
