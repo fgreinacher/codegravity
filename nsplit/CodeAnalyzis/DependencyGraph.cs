@@ -16,8 +16,8 @@ namespace nsplit.CodeAnalyzis
         private readonly Type[] m_Types;
         private readonly INode[] m_NodesById;
 
-        public EventHandler<EdgeAddedEventArgs> OnEdgeAdded;
-        public EventHandler<BuildProgressEventArgs> OnProgress;
+        public event EventHandler<EdgeAddedEventArgs> OnEdgeAdded;
+        public event EventHandler<BuildProgressEventArgs> OnProgress;
 
         public DependencyGraph(Tree tree, Type[] types, AdjacencyMatrix matrix, INode[] nodesById)
         {
@@ -57,9 +57,9 @@ namespace nsplit.CodeAnalyzis
 
         private void DoBuild()
         {
-            DoBuildTask(m_Types, AnalyzerExtensions.Uses, "Analyzing uses:");
-            DoBuildTask(m_Types, AnalyzerExtensions.Implements, "Analyzing implements:");
-            DoBuildTask(m_Types, AnalyzerExtensions.Calls, "Analyzing calls:");
+            DoBuildTask(m_Types, AnalyzerExtensions.Uses, "Analyzing uses");
+            DoBuildTask(m_Types, AnalyzerExtensions.Implements, "Analyzing implements");
+            DoBuildTask(m_Types, AnalyzerExtensions.Calls, "Analyzing calls");
         }
 
         public INode GetNode(int idNo)
@@ -92,6 +92,7 @@ namespace nsplit.CodeAnalyzis
                 }
                 InvokeOnProgress(taskName, i, types.Length);
             }
+            InvokeOnProgress(taskName, types.Length, types.Length);
         }
 
         private void InvokeOnProgress(string taskName, int actual, int max)

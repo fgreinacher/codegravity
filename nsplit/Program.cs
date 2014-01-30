@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
 using System.Xml;
+using AutoMapper;
 using nsplit.Helper;
 
 #endregion
@@ -23,7 +24,7 @@ namespace nsplit
             //RegisterFolderResolver(folderPath);
             //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
 
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            Assembly assembly = typeof(Program).Assembly;
 
             Registry.Build(assembly);
 
@@ -62,7 +63,6 @@ namespace nsplit
                     return;
                 }
                 Process.Start("http://localhost:8080/index.html");
-                Console.WriteLine("Press any key to quit.");
                 Console.ReadKey();
             }
         }
