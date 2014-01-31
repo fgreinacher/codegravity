@@ -21,8 +21,14 @@ namespace nsplit
     {
         private static void Main(string[] args)
         {
-            //RegisterFolderResolver(folderPath);
-            //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
+            const string  folderPath = @"c:\temp\tia\";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.UI";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Compare.Core";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.Core";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.BL";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.BL";
+            RegisterFolderResolver(folderPath);
+           //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
 
             Assembly assembly = typeof(Program).Assembly;
 
@@ -63,7 +69,7 @@ namespace nsplit
                     Process.Start("readme.html");
                     return;
                 }
-                Process.Start("http://localhost:8080/index.html");
+                Process.Start("http://localhost:8080/index2.html");
                 Console.ReadKey();
             }
         }

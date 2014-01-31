@@ -49,5 +49,18 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
                 yield return new Edge(i, id, value);
             }
         }
+
+        public IEnumerable<Edge> All()
+        {
+            for (int i = 0; i < m_Matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < m_Matrix.GetLength(1); j++)
+                {
+                    var value = m_Matrix[i, j];
+                    if (value == DependencyKinds.None) continue;
+                    yield return new Edge(i, j, value);
+                }
+            }
+        }
     }
 }

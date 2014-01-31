@@ -9,6 +9,13 @@ namespace nsplit.Api
 {
     public class TreeViewController : ApiController
     {
+        [ActionName("deep")]
+        public DeepNodeDto GetDeep()
+        {
+            var root = Registry.GetNode(0);
+            return Mapper.DynamicMap<DeepNodeDto>(root);
+        }
+
         [ActionName("node")]
         public NodeDto GetNode(string id)
         {

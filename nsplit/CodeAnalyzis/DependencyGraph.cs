@@ -130,5 +130,10 @@ namespace nsplit.CodeAnalyzis
             var eventArgs = new EdgeAddedEventArgs(edge);
             handler.Invoke(this, eventArgs);
         }
+
+        public IEnumerable<Edge> All()
+        {
+            return m_Matrix.All();
+        }
     }
 }
