@@ -1,4 +1,8 @@
-﻿#region usings
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
 
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +69,10 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
 
             var name = nodeNames.Dequeue();
             bool isOk = m_ChildNodes.TryGetValue(name, out node);
-            if (!isOk) {return false;}
+            if (!isOk)
+            {
+                return false;
+            }
             return node.TryGetNode(nodeNames, out node);
         }
     }

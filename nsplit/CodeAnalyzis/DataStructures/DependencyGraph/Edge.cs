@@ -1,13 +1,21 @@
-﻿using System.Collections.Generic;
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
+
+using System.Collections.Generic;
 using System.Linq;
+
+#endregion
 
 namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 {
     internal class Edge
     {
+        private readonly DependencyKinds m_Kinds;
         private readonly int m_Source;
         private readonly int m_Target;
-        private readonly DependencyKinds m_Kinds;
 
         public Edge(int source, int target, DependencyKinds kinds)
         {
@@ -34,7 +42,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
         public IEnumerable<Edge> FlattenFlags()
         {
             return Kinds.Flatten().Select(kind => new Edge(Source, Target, kind));
-        } 
+        }
 
         protected bool Equals(Edge other)
         {
@@ -46,7 +54,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((Edge)obj);
+            return Equals((Edge) obj);
         }
 
         public override int GetHashCode()
@@ -54,8 +62,8 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
             unchecked
             {
                 var hashCode = m_Source;
-                hashCode = (hashCode * 397) ^ m_Target;
-                hashCode = (hashCode * 397) ^ (int)m_Kinds;
+                hashCode = (hashCode*397) ^ m_Target;
+                hashCode = (hashCode*397) ^ (int) m_Kinds;
                 return hashCode;
             }
         }

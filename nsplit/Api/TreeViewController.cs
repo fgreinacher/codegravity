@@ -1,9 +1,17 @@
-﻿using System.Collections.Generic;
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
 using AutoMapper;
 using nsplit.Api.Dto;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
+
+#endregion
 
 namespace nsplit.Api
 {
@@ -27,8 +35,8 @@ namespace nsplit.Api
         public IEnumerable<NodeDto> GetChildren(string id)
         {
             INode parent = Registry.GetNode(id);
-            
-             return 
+
+            return
                 parent
                     .Children()
                     .Select(Mapper.DynamicMap<NodeDto>);

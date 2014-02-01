@@ -1,16 +1,17 @@
-﻿#region usings
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
 using System.Xml;
-using AutoMapper;
 using nsplit.Helper;
 
 #endregion
@@ -21,16 +22,11 @@ namespace nsplit
     {
         private static void Main(string[] args)
         {
-            const string  folderPath = @"c:\temp\tia\";
-            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.UI";
-            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Compare.Core";
-            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.Core";
-            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.BL";
-            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.BL";
+            const string folderPath = @"c:\temp\tia\";
             RegisterFolderResolver(folderPath);
-           //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
+            //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
 
-            Assembly assembly = typeof(Program).Assembly;
+            Assembly assembly = typeof (Program).Assembly;
 
             Registry.Build(assembly);
 

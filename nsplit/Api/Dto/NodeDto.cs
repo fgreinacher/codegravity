@@ -1,4 +1,12 @@
-﻿using System.Runtime.Serialization;
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
+
+using System.Runtime.Serialization;
+
+#endregion
 
 namespace nsplit.Api.Dto
 {
@@ -20,10 +28,7 @@ namespace nsplit.Api.Dto
         [DataMember(Name = "icon")]
         public string Icon
         {
-            get
-            {
-                return IsLeaf ? "/css/c.png" : "/css/n.png";
-            }
+            get { return IsLeaf ? "/css/c.png" : "/css/n.png"; }
         }
     }
 
@@ -57,19 +62,13 @@ namespace nsplit.Api.Dto
         [DataMember(Name = "children")]
         public bool CanHaveChildren
         {
-            get
-            {
-                return !IsLeaf;
-            }
+            get { return !IsLeaf; }
         }
 
         [DataMember(Name = "icon")]
         public string Icon
         {
-            get
-            {
-                return IsLeaf ? "/css/c.png" : "/css/n.png";
-            }
+            get { return IsLeaf ? "/css/c.png" : "/css/n.png"; }
         }
     }
 }

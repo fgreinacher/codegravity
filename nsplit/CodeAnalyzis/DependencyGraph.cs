@@ -1,5 +1,10 @@
-﻿using System;
-using System.Collections;
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,17 +12,16 @@ using System.Threading.Tasks;
 using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
+#endregion
+
 namespace nsplit.CodeAnalyzis
 {
     internal class DependencyGraph
     {
-        private readonly Tree m_Tree;
         private readonly AdjacencyMatrix m_Matrix;
-        private readonly Type[] m_Types;
         private readonly INode[] m_NodesById;
-
-        public event EventHandler<EdgeAddedEventArgs> OnEdgeAdded;
-        public event EventHandler<BuildProgressEventArgs> OnProgress;
+        private readonly Tree m_Tree;
+        private readonly Type[] m_Types;
 
         public DependencyGraph(Tree tree, Type[] types, AdjacencyMatrix matrix, INode[] nodesById)
         {
@@ -26,6 +30,9 @@ namespace nsplit.CodeAnalyzis
             m_Matrix = matrix;
             m_NodesById = nodesById;
         }
+
+        public event EventHandler<EdgeAddedEventArgs> OnEdgeAdded;
+        public event EventHandler<BuildProgressEventArgs> OnProgress;
 
         public static DependencyGraph StartBuildAsync(Assembly assembly)
         {
@@ -46,7 +53,7 @@ namespace nsplit.CodeAnalyzis
         {
             var nodeFactory = new NodeFactory();
             var tree = new Tree(nodeFactory);
-            
+
             foreach (var type in types)
             {
                 var fullName = type.FullName;
@@ -76,7 +83,7 @@ namespace nsplit.CodeAnalyzis
             var inDeps = allLeafs.SelectMany(n => m_Matrix.In(node.Id));
             return outDeps.Concat(inDeps).SelectMany(e => e.FlattenFlags()).Distinct();
         }
-      
+
 
         private void DoBuildTask(Type[] types, Func<Type, IEnumerable<Dependency>> getter, string taskName)
         {
@@ -108,9 +115,9 @@ namespace nsplit.CodeAnalyzis
             edge = null;
             //NOTE: For instance IEnumerable.FullName == null
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (dependency.Source.FullName==null) return false;
+            if (dependency.Source.FullName == null) return false;
             // ReSharper disable once ConditionIsAlwaysTrueOrFalse
-            if (dependency.Target.FullName==null) return false;
+            if (dependency.Target.FullName == null) return false;
 
             INode source;
             bool sourceFound = m_Tree.TryGet(dependency.Source.FullName, out source);

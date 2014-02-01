@@ -1,5 +1,13 @@
-﻿using System;
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
+
+using System;
 using System.Collections.Generic;
+
+#endregion
 
 namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 {
@@ -12,14 +20,13 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 
         public static IEnumerable<DependencyKinds> Flatten(this DependencyKinds kinds)
         {
-            foreach (DependencyKind kind in Enum.GetValues(typeof(DependencyKind)))
+            foreach (DependencyKind kind in Enum.GetValues(typeof (DependencyKind)))
             {
                 var mask = kind.ToFlags();
                 var matches = kinds & mask;
-                if (matches==DependencyKinds.None) continue;
+                if (matches == DependencyKinds.None) continue;
                 yield return mask;
             }
         }
-
     }
 }

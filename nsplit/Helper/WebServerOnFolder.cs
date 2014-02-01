@@ -1,4 +1,10 @@
-﻿using System;
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -6,15 +12,18 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
+#endregion
+
 namespace nsplit.Helper
 {
     internal class WebServerOnFolder : DelegatingHandler
     {
-        private readonly Func<HttpRequestMessage, bool> m_Matches;
         private readonly string m_BaseFolder;
         private readonly Dictionary<string, FileType> m_FileTypes;
+        private readonly Func<HttpRequestMessage, bool> m_Matches;
 
-        public WebServerOnFolder(Func<HttpRequestMessage, bool> matches, string folderPath, params FileType[] allowedFileTypes)
+        public WebServerOnFolder(Func<HttpRequestMessage, bool> matches, string folderPath,
+            params FileType[] allowedFileTypes)
         {
             m_Matches = matches;
             m_BaseFolder = folderPath;
@@ -30,7 +39,7 @@ namespace nsplit.Helper
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
-            return 
+            return
                 !m_Matches(request)
                     ? base.SendAsync(request, cancellationToken)
                     : Task<HttpResponseMessage>
@@ -50,7 +59,7 @@ namespace nsplit.Helper
             if (!File.Exists(fullPath))
             {
                 return request.CreateErrorResponse(
-                    HttpStatusCode.NotFound, 
+                    HttpStatusCode.NotFound,
                     string.Format("Sorry about that, but there is no file named '{0}' here.", suffix));
             }
 
@@ -59,7 +68,7 @@ namespace nsplit.Helper
             if (!m_FileTypes.TryGetValue(extension, out fileType))
             {
                 return request.CreateErrorResponse(
-                    HttpStatusCode.UnsupportedMediaType, 
+                    HttpStatusCode.UnsupportedMediaType,
                     string.Format("Sorry I can not process files like '{0}'.", extension));
             }
 

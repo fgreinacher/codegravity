@@ -1,4 +1,8 @@
-﻿var w = 1280,
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+var w = 1280,
     h = 800,
     node,
     link,
@@ -39,7 +43,7 @@ d3.json("api/treeview/deep", function(json) {
         .on('close_node.jstree', function(e, data) {
             var n = data.node;
             if (!n.children) return;
-            n.children.forEach(function (el) { data.instance.close_node(el); });
+            n.children.forEach(function(el) { data.instance.close_node(el); });
             var vertex = nodesById[n.original.id];
             if (vertex.isExpanded) toggleNode(vertex);
         });
@@ -190,11 +194,11 @@ function update() {
         .on("click", toggleNode)
         .on("mouseover", mouseOver)
         .call(force.drag);
-        //.append("text")
-        //.attr("class", "text")
-        //.attr("x", 12)
-        //.attr("dy", ".35em")
-        //.text(function(d) { return d.text; });
+    //.append("text")
+    //.attr("class", "text")
+    //.attr("x", 12)
+    //.attr("dy", ".35em")
+    //.text(function(d) { return d.text; });
 
     // Exit any old nodes.
     node.exit().remove();
@@ -207,7 +211,7 @@ function tick() {
         .attr("y2", function(d) { return d.target.y; });
 
     node.attr("cx", function(d) { return d.x; })
-        .attr("cy", function (d) { return d.y; });
+        .attr("cy", function(d) { return d.y; });
 }
 
 function colorD(d) {
@@ -232,7 +236,7 @@ function toggleNode(d) {
     d.isExpanded = !d.isExpanded;
     update();
 }
-    
+
 function explode(d) {
     if (d.children == null) return;
     var segment = 2 * Math.PI / d.children.length;

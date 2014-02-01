@@ -21,7 +21,7 @@
                 system.screen({
                     size: { width: canvas.width, height: canvas.height },
                     padding: [50, 50, 50, 50],
-                    step:.02
+                    step: .02
                 });
 
                 $(window).resize(that.resize);
@@ -152,7 +152,7 @@
             precision: 0.6,
             gravity: true
         });
-        
+
         sys.renderer = renderer("#viewport");
         sys.getVertex = function(path) {
             for (var i = 0; i < path.length; i++) {
@@ -164,7 +164,7 @@
         sys.addVertex = function(treeNode, x, y) {
             sys.addNode(treeNode.id, { label: treeNode.text, x: x, y: y });
             $.getJSON("api/dependencies/edges?id=" + treeNode.id, function(edges) {
-                $.each(edges, function (eidx, edge) {
+                $.each(edges, function(eidx, edge) {
 
                     var source = sys.getVertex(edge.sources);
                     var target = sys.getVertex(edge.targets);
@@ -177,67 +177,69 @@
         };
 
 
-            $('#typetree')
-                .on('after_open.jstree', function (e, data) {
-                    var typeTree = data.instance;
-                    var parent = data.node;
-                    var parentVertex = sys.getNode(parent.id);
-                    var x = 0;
-                    var y = 0;
-                    if (parentVertex != null) {
-                        x = parentVertex.p.x;
-                        y = parentVertex.p.y;
-                        sys.pruneNode(parentVertex);
-                    }
-                    var segmentAngle = 2 * Math.PI / parent.children.length;
-                    $.each(parent.children, function (idx, childId) {
-                        var childNode = typeTree.get_node(childId);
-                        var angle = segmentAngle * idx;
-                        var vx = x + .2 * Math.sin(angle);;
-                        var vy = y + .2 * Math.cos(angle);;
-                        sys.addVertex(childNode, vx, vy);
-                    });
-                })
-                .on('after_close.jstree', function (e, data) {
-                    var typeTree = data.instance;
-                    var parent = data.node;
-                    var x=0;
-                    var y=0;
-                    var childCount = parent.children.length;
-                    $.each(parent.children, function (idx, childId) {
-                        var childNode = typeTree.get_node(childId);
-                        typeTree.close_node(childNode);
-                        var childVertex = sys.getNode(childId);
-                        x += childVertex.p.x;
-                        y += childVertex.p.y;
-                        sys.pruneNode(childVertex);
-                    });
-                    x = x / childCount;
-                    y = y / childCount;
-                    sys.addVertex(parent, x, y);
-                })
-                .on('loaded.jstree', function (e, data) {
-                    var typeTree = data.instance;
-                    var rootNode = typeTree.get_node("#");
-                    typeTree.open_node(rootNode);
-                    $.each(rootNode.children, function (idx, childId) {
-                        var childNode = data.instance.get_node(childId);
-                        typeTree.open_node(childNode);
-                    });
-                })
-                .jstree({
-                    'core': {
-                        'data': {
-                            'url': function(node) {
-                                return node.id === '#' ?
-                                    '/api/treeview/children' :
-                                    '/api/treeview/children';
-                            },
-                            'data': function(node) {
-                                return { 'id': node.id };
-                            }
+        $('#typetree')
+            .on('after_open.jstree', function(e, data) {
+                var typeTree = data.instance;
+                var parent = data.node;
+                var parentVertex = sys.getNode(parent.id);
+                var x = 0;
+                var y = 0;
+                if (parentVertex != null) {
+                    x = parentVertex.p.x;
+                    y = parentVertex.p.y;
+                    sys.pruneNode(parentVertex);
+                }
+                var segmentAngle = 2 * Math.PI / parent.children.length;
+                $.each(parent.children, function(idx, childId) {
+                    var childNode = typeTree.get_node(childId);
+                    var angle = segmentAngle * idx;
+                    var vx = x + .2 * Math.sin(angle);
+                    ;
+                    var vy = y + .2 * Math.cos(angle);
+                    ;
+                    sys.addVertex(childNode, vx, vy);
+                });
+            })
+            .on('after_close.jstree', function(e, data) {
+                var typeTree = data.instance;
+                var parent = data.node;
+                var x = 0;
+                var y = 0;
+                var childCount = parent.children.length;
+                $.each(parent.children, function(idx, childId) {
+                    var childNode = typeTree.get_node(childId);
+                    typeTree.close_node(childNode);
+                    var childVertex = sys.getNode(childId);
+                    x += childVertex.p.x;
+                    y += childVertex.p.y;
+                    sys.pruneNode(childVertex);
+                });
+                x = x / childCount;
+                y = y / childCount;
+                sys.addVertex(parent, x, y);
+            })
+            .on('loaded.jstree', function(e, data) {
+                var typeTree = data.instance;
+                var rootNode = typeTree.get_node("#");
+                typeTree.open_node(rootNode);
+                $.each(rootNode.children, function(idx, childId) {
+                    var childNode = data.instance.get_node(childId);
+                    typeTree.open_node(childNode);
+                });
+            })
+            .jstree({
+                'core': {
+                    'data': {
+                        'url': function(node) {
+                            return node.id === '#' ?
+                                '/api/treeview/children' :
+                                '/api/treeview/children';
+                        },
+                        'data': function(node) {
+                            return { 'id': node.id };
                         }
                     }
-                });
+                }
+            });
     });
-})(this.jQuery)
+})(this.jQuery);

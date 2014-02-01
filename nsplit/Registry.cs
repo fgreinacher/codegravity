@@ -1,7 +1,10 @@
-﻿#region usings
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using nsplit.CodeAnalyzis;
@@ -28,7 +31,10 @@ namespace nsplit
                 if (_currentProgress == progress) return;
                 Console.Write("\r{0,10} :\t{1}%", e.TaskName, progress);
                 _currentProgress = progress;
-                if (progress == 100) { Console.WriteLine(); }
+                if (progress == 100)
+                {
+                    Console.WriteLine();
+                }
             };
 
             //_edges = new ConcurrentQueue<Edge>();

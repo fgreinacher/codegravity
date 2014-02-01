@@ -1,4 +1,8 @@
-﻿#region usings
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
 
 using System.Collections.Generic;
 
@@ -16,6 +20,16 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
         {
             m_NodeFactory = nodeFactory;
             m_Root = m_NodeFactory.CreateNode(string.Empty, null);
+        }
+
+        public int Count
+        {
+            get { return m_NodeFactory.Count; }
+        }
+
+        public IEnumerable<INode> Nodes
+        {
+            get { return m_NodeFactory.Nodes; }
         }
 
         public INode Add(string fullName)
@@ -44,19 +58,6 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
             bool isOk = node.TryGetLeaf(qualifiedName.Leaf, out result);
             leaf = result;
             return isOk;
-        }
-
-        public int Count
-        {
-            get
-            {
-                return m_NodeFactory.Count;
-            }
-        }
-
-        public IEnumerable<INode> Nodes
-        {
-            get { return m_NodeFactory.Nodes; }
         }
     }
 }

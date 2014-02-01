@@ -1,12 +1,20 @@
-﻿using System;
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
+
+using System;
+
+#endregion
 
 namespace nsplit.CodeAnalyzis
 {
     public abstract class Dependency
     {
+        private readonly DependencyKind m_Kind;
         private readonly Type m_Source;
         private readonly Type m_Target;
-        private readonly DependencyKind m_Kind;
 
         protected Dependency(Type source, Type target, DependencyKind kind)
         {

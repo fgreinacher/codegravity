@@ -1,5 +1,13 @@
+// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
+
+#region usings
+
 using System.Net.Http.Headers;
 using System.Net.Mime;
+
+#endregion
 
 namespace nsplit.Helper
 {
@@ -12,7 +20,7 @@ namespace nsplit.Helper
         public static FileType Png = new FileType(".png", "image/png");
         public static FileType Json = new FileType(".json", MediaTypeNames.Text.Plain);
 
-        
+
         private readonly string m_Extension;
         private readonly string m_MediaType;
 
@@ -24,18 +32,12 @@ namespace nsplit.Helper
 
         public string Extension
         {
-            get
-            {
-                return m_Extension;
-            }
+            get { return m_Extension; }
         }
 
         public MediaTypeHeaderValue ContentType
         {
-            get
-            {
-                return new MediaTypeHeaderValue(m_MediaType);
-            }
+            get { return new MediaTypeHeaderValue(m_MediaType); }
         }
     }
 }
