@@ -65,7 +65,7 @@ namespace nsplit
                     Process.Start("readme.html");
                     return;
                 }
-                Process.Start("http://localhost:8080/index2.html");
+                Process.Start("http://localhost:8080/index.html");
                 Console.ReadKey();
             }
         }

@@ -1,245 +1,281 @@
-﻿var showLabels = true;
+﻿// This code is distributed under MIT license. 
+// Copyright (c) 2014 George Mamaladze, Florian Greinacher
+// See license.txt or http://opensource.org/licenses/mit-license.php
 
-(function($) {
+var w = 1280,
+    h = 800,
+    node,
+    link,
+    root;
 
-    var renderer = function(elt) {
+var force = d3.layout.force()
+    .on("tick", tick)
+    .size([w, h - 160]);
 
-        var strokeStyles = {
-            "Implements": "rgba(255,0,0, .333)",
-            "Uses": "rgba(0,255,0, .333)",
-            "Calls": "rgba(0,0,255, .333)"
-        };
+var vis = d3.select("#viewport")
+    .append("svg:svg")
+    .attr("width", w)
+    .attr("height", h);
 
-        var canvas = $(elt).get(0);
-        var ctx = canvas.getContext("2d");
-        var particleSystem;
-        var that = {
-            init: function(system) {
+var root;
+var rawLinks = [];
+var nodesById = [];
 
-                particleSystem = system;
+d3.json("api/treeview/deep", function(json) {
 
-                system.screen({
-                    size: { width: canvas.width, height: canvas.height },
-                    padding: [50, 50, 50, 50],
-                    step: .02
-                });
+    root = json;
+    root.fixed = true;
+    root.x = w / 2;
+    root.y = h / 2 - 80;
 
-                $(window).resize(that.resize);
-                that.resize();
-                that.initMouseHandling();
-            },
 
-            redraw: function() {
-                ctx.fillStyle = "white";
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                particleSystem.eachEdge(function(edge, pt1, pt2) {
-
-                    // edge: {source:Node, target:Node, length:#, data:{}}
-                    // pt1:  {x:#, y:#}  source position in screen coords
-                    // pt2:  {x:#, y:#}  target position in screen coords
-
-                    // draw a line from pt1 to pt2
-                    ctx.strokeStyle = strokeStyles[edge.data.kind];
-                    ctx.lineWidth = 1;
-                    ctx.beginPath();
-                    ctx.moveTo(pt1.x, pt1.y);
-                    ctx.lineTo(pt2.x, pt2.y);
-                    ctx.stroke();
-                });
-
-                particleSystem.eachNode(function(node, pt) {
-                    // node: {mass:#, p:{x,y}, name:"", data:{}}
-                    // pt:   {x:#, y:#}  node position in screen coords
-
-                    //// draw a rectangle centered at pt
-                    //var w = 10;
-                    //ctx.fillStyle = (node.data.alone) ? "orange" : "black";
-                    //ctx.fillRect(pt.x - w / 2, pt.y - w / 2, w, w);
-
-                    var label = showLabels ? node.data.label : "x";
-
-                    var w = ctx.measureText(label || "").width + 6;
-
-                    if (!(label || "").match(/^[ \t]*$/)) {
-                        pt.x = Math.floor(pt.x);
-                        pt.y = Math.floor(pt.y);
-                    } else {
-                        label = null;
-                    }
-
-                    //Clear any edges under text
-                    ctx.clearRect(pt.x - w / 2, pt.y - 7, w, 14);
-
-                    // draw the text
-                    if (label) {
-                        ctx.font = "bold 11px Arial";
-                        ctx.textAlign = "center";
-                        ctx.fillStyle = "#888888";
-                        ctx.fillText(label || "", pt.x, pt.y + 4);
-                    }
-                });
-            },
-
-            resize: function() {
-                canvas.width = .75 * $(window).width();
-                canvas.height = $(window).height();
-                particleSystem.screen({
-                    size: { width: canvas.width, height: canvas.height }
-                });
-                that.redraw();
-            },
-
-            initMouseHandling: function() {
-                // no-nonsense drag and drop (thanks springy.js)
-                var dragged = null;
-
-                // set up a handler object that will initially listen for mousedowns then
-                // for moves and mouseups while dragging
-                var handler = {
-                    clicked: function(e) {
-                        var pos = $(canvas).offset();
-                        _mouseP = arbor.Point(e.pageX - pos.left, e.pageY - pos.top);
-                        dragged = particleSystem.nearest(_mouseP);
-
-                        if (dragged && dragged.node !== null) {
-                            // while we're dragging, don't let physics move the node
-                            dragged.node.fixed = true;
-                        }
-
-                        $(canvas).bind('mousemove', handler.dragged);
-                        $(window).bind('mouseup', handler.dropped);
-                        return false;
-                    },
-
-                    dragged: function(e) {
-                        var pos = $(canvas).offset();
-                        var s = arbor.Point(e.pageX - pos.left, e.pageY - pos.top);
-                        if (dragged && dragged.node !== null) {
-                            var p = particleSystem.fromScreen(s);
-                            dragged.node.p = p;
-                        }
-
-                        return false;
-                    },
-
-                    dropped: function(e) {
-                        if (dragged === null || dragged.node === undefined) return;
-                        if (dragged.node !== null) dragged.node.fixed = false;
-                        dragged.node.tempMass = 1000;
-                        dragged = null;
-                        $(canvas).unbind('mousemove', handler.dragged);
-                        $(window).unbind('mouseup', handler.dropped);
-                        _mouseP = null;
-                        return false;
-                    }
-                };
-                $(canvas).mousedown(handler.clicked);
-            },
-        };
-        return that;
-    };
-
-    $(document).ready(function() {
-
-        var sys = arbor.ParticleSystem();
-        sys.parameters({
-            repulsion: 1000,
-            stiffness: 600,
-            friction: 0.5,
-            fps: 55,
-            dt: 0.02,
-            precision: 0.6,
-            gravity: true
+    $('#typetree')
+        .jstree({
+            'core': {
+                'data':
+                    root
+            }
+        })
+        .on('open_node.jstree', function(e, data) {
+            var vertex = nodesById[data.node.original.id];
+            if (!vertex.isExpanded) toggleNode(vertex);
+        })
+        .on('close_node.jstree', function(e, data) {
+            var n = data.node;
+            if (!n.children) return;
+            n.children.forEach(function(el) { data.instance.close_node(el); });
+            var vertex = nodesById[n.original.id];
+            if (vertex.isExpanded) toggleNode(vertex);
         });
 
-        sys.renderer = renderer("#viewport");
-        sys.getVertex = function(path) {
-            for (var i = 0; i < path.length; i++) {
-                var firstVisible = sys.getNode(path[i]);
-                if (firstVisible != null) return firstVisible;
+
+    root.size = normalize(root);
+
+    //set parent, eliminate empty children[], caclculate size - recursively
+
+    function normalize(node) {
+        node.size = 1;
+        node.isExpanded = false;
+        if (node.children) {
+            for (var i = 0; i < node.children.length; i++) {
+                var child = node.children[i];
+                child.parent = node;
+                node.size += normalize(child);
             }
-            return null;
-        };
-        sys.addVertex = function(treeNode, x, y) {
-            sys.addNode(treeNode.id, { label: treeNode.text, x: x, y: y });
-            $.getJSON("api/dependencies/edges?id=" + treeNode.id, function(edges) {
-                $.each(edges, function(eidx, edge) {
+            if (node.children.length == 0) node.children = null;
+        }
+        return node.size;
+    }
 
-                    var source = sys.getVertex(edge.sources);
-                    var target = sys.getVertex(edge.targets);
-                    sys.addEdge(
-                        source,
-                        target,
-                        { kind: edge.kind });
-                });
-            });
-        };
+    var top20 =
+        flatten(root, function(n) { return n.children; })
+            .sort(function(n) { return n.children ? -n.size : 0; })
+            .slice(0, 20);
 
+    var colors20 = d3.scale.category20();
 
-        $('#typetree')
-            .on('after_open.jstree', function(e, data) {
-                var typeTree = data.instance;
-                var parent = data.node;
-                var parentVertex = sys.getNode(parent.id);
-                var x = 0;
-                var y = 0;
-                if (parentVertex != null) {
-                    x = parentVertex.p.x;
-                    y = parentVertex.p.y;
-                    sys.pruneNode(parentVertex);
-                }
-                var segmentAngle = 2 * Math.PI / parent.children.length;
-                $.each(parent.children, function(idx, childId) {
-                    var childNode = typeTree.get_node(childId);
-                    var angle = segmentAngle * idx;
-                    var vx = x + .2 * Math.sin(angle);
-                    ;
-                    var vy = y + .2 * Math.cos(angle);
-                    ;
-                    sys.addVertex(childNode, vx, vy);
-                });
-            })
-            .on('after_close.jstree', function(e, data) {
-                var typeTree = data.instance;
-                var parent = data.node;
-                var x = 0;
-                var y = 0;
-                var childCount = parent.children.length;
-                $.each(parent.children, function(idx, childId) {
-                    var childNode = typeTree.get_node(childId);
-                    typeTree.close_node(childNode);
-                    var childVertex = sys.getNode(childId);
-                    x += childVertex.p.x;
-                    y += childVertex.p.y;
-                    sys.pruneNode(childVertex);
-                });
-                x = x / childCount;
-                y = y / childCount;
-                sys.addVertex(parent, x, y);
-            })
-            .on('loaded.jstree', function(e, data) {
-                var typeTree = data.instance;
-                var rootNode = typeTree.get_node("#");
-                typeTree.open_node(rootNode);
-                $.each(rootNode.children, function(idx, childId) {
-                    var childNode = data.instance.get_node(childId);
-                    typeTree.open_node(childNode);
-                });
-            })
-            .jstree({
-                'core': {
-                    'data': {
-                        'url': function(node) {
-                            return node.id === '#' ?
-                                '/api/treeview/children' :
-                                '/api/treeview/children';
-                        },
-                        'data': function(node) {
-                            return { 'id': node.id };
-                        }
-                    }
-                }
-            });
+    for (var i = 0; i < top20.length; i++) {
+        if (top20[i].size != 1)
+            top20[i].color = colors20(i);
+    }
+
+    d3.json("api/dependencies/links", function(jsonLinks) {
+        rawLinks = jsonLinks;
+        update();
     });
-})(this.jQuery);
+});
+
+
+function flatten(node, deep) {
+    return deep(node)
+        ? [node].concat(
+            deep(node)
+                .reduce(
+                    function(s, e) {
+                        return s.concat(flatten(e, deep));
+                    }, []))
+        : [node];
+}
+
+;
+
+
+function getLinks() {
+
+    var links = [];
+    var matrix = [];
+
+    var allNodes = flatten(root, function(node) {
+        return node.children;
+    });
+
+    var visibleNodes = flatten(root, function(node) {
+        return node.isExpanded ? node.children : [];
+    });
+
+    allNodes = indexNodes(allNodes);
+    nodesById = allNodes;
+    visibleNodes = indexNodes(visibleNodes);
+
+    function indexNodes(nodes) {
+        var nodesByName = [];
+        nodes.forEach(function(n) {
+            nodesByName[n.id] = n;
+        });
+        return nodesByName;
+    }
+
+    rawLinks.forEach(function(l) {
+
+        function getVisibleNode(id, count) {
+            if (count > 100) return null; //TODO Check why ?
+            var node = visibleNodes[id];
+            if (node) return node;
+            node = allNodes[id];
+            var parent = node.parent;
+            if (parent) return getVisibleNode(parent.id, count + 1);
+            return null;
+        }
+
+        var source = getVisibleNode(l.source, 0);
+        var target = getVisibleNode(l.target, 0);
+
+        if (!source || !target) return;
+        if (!matrix[source.id]) matrix[source.id] = [];
+        if (!matrix[source.id][target.id]) {
+            matrix[source.id][target.id] = true;
+            links.push({ source: source, target: target });
+        }
+    });
+    return links;
+}
+
+function update() {
+    var nodes = visibleNodes(root),
+        links = getLinks(); // d3.layout.tree().links(nodes);
+
+    // Restart the force layout.
+    force
+        .nodes(nodes)
+        .links(links)
+        .start();
+
+    // Update the links…
+    link = vis.selectAll("line.link")
+        //.data(links, function(d) { return d.target.id; });
+        .data(links);
+
+    // Enter any new links.
+    link.enter().insert("svg:line", ".node")
+        .attr("class", "link")
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    // Exit any old links.
+    link.exit().remove();
+
+    // Update the nodes…
+    node = vis.selectAll("circle.node")
+        .data(nodes, function(d) { return d.id; })
+        .style("fill", colorD);
+
+    //node.transition()
+    //    .attr("r", function (d) { return d.visibleChildren ? 4.5 : Math.sqrt(1000 / root.size * d.size); });
+
+    // Enter any new nodes.
+    node.enter().append("svg:circle")
+        .attr("class", "node")
+        .attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; })
+        .attr("r", function(d) { return d.isExpanded ? 4.5 : Math.max(Math.sqrt(1000 / root.size * d.size), 3); })
+        .style("fill", colorD)
+        .on("click", toggleNode)
+        .on("mouseover", mouseOver)
+        .call(force.drag);
+    //.append("text")
+    //.attr("class", "text")
+    //.attr("x", 12)
+    //.attr("dy", ".35em")
+    //.text(function(d) { return d.text; });
+
+    // Exit any old nodes.
+    node.exit().remove();
+}
+
+function tick() {
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node.attr("cx", function(d) { return d.x; })
+        .attr("cy", function(d) { return d.y; });
+}
+
+function colorD(d) {
+    return d.color
+        ? d.color
+        : d.parent.color;
+    //return d.children ? color(d.id) : d.visibleChildren ? "#c6dbef" : color(d.parent.id);
+}
+
+
+// Toggle children on click.
+
+function mouseOver(d) {
+    var tree = $('#typetree').jstree(true);
+    tree.deselect_all();
+    tree.select_node(d, true);
+}
+
+function toggleNode(d) {
+    if (d.isExpanded) implode(d);
+    else explode(d);
+    d.isExpanded = !d.isExpanded;
+    update();
+}
+
+function explode(d) {
+    if (d.children == null) return;
+    var segment = 2 * Math.PI / d.children.length;
+    var angle = 0;
+    d.children.forEach(function(child) {
+        {
+            angle += segment;
+            child.x = d.x + 10 * Math.sin(angle);
+            child.y = d.y + 10 * Math.cos(angle);
+        }
+    });
+}
+
+function implode(d) {
+    if (d.children == null) return;
+    var sumX = 0;
+    var sumY = 0;
+    d.children.forEach(function(child) {
+        {
+            sumX += child.x;
+            sumY += child.y;
+        }
+        d.x = sumX / d.children.length;
+        d.Y = sumY / d.children.length;
+    });
+}
+
+function visibleNodes(node) {
+    return node.isExpanded && node.children
+        ?
+        node
+            .children
+            .reduce(
+                function(s, e) {
+                    return s.concat(visibleNodes(e));
+                }, [])
+        : [node];
+}
+
+$(document).ready(function() {
+
+});
