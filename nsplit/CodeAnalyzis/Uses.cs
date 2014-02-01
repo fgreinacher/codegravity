@@ -5,13 +5,8 @@ namespace nsplit.CodeAnalyzis
     public class Uses : Dependency
     {
         public Uses(Type source, Type target)
-            : base(source, target)
+            : base(source, target, DependencyKind.Uses)
         {
-        }
-
-        public override DependencyKind Kind
-        {
-            get { return DependencyKind.Uses; }
         }
     }
 }

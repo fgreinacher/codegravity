@@ -5,13 +5,8 @@ namespace nsplit.CodeAnalyzis
     public class Implements : Dependency
     {
         public Implements(Type source, Type target)
-            : base(source, target)
+            : base(source, target, DependencyKind.Implements)
         {
-        }
-
-        public override DependencyKind Kind
-        {
-            get { return DependencyKind.Implements; }
         }
     }
 }

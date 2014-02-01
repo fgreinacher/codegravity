@@ -8,19 +8,27 @@ namespace nsplit.CodeAnalyzis
         private readonly MethodBase m_Method;
 
         public MethodCall(Type source, Type target, MethodBase method)
-            : base(source, target)
+            : base(source, target, DependencyKind.MethodCall)
         {
             m_Method = method;
-        }
-
-        public override DependencyKind Kind
-        {
-            get { return DependencyKind.MethodCall; }
         }
 
         public MethodBase Method
         {
             get { return m_Method; }
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode() ^ m_Method.GetHashCode();
+        }
+
+        public override bool Equals(object other)
+        {
+            var otherMethodCall = other as MethodCall;
+            return otherMethodCall != null &&
+                   otherMethodCall.m_Method == m_Method &&
+                   base.Equals(other);
         }
 
         public override string ToString()
