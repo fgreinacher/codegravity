@@ -1,4 +1,6 @@
-﻿using System;
+﻿#region usings
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -8,33 +10,29 @@ using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
 using System.Xml;
-using nsplit.CodeAnalyzis;
-using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
-using nsplit.CodeAnalyzis.DataStructures.TypeTree;
+using AutoMapper;
 using nsplit.Helper;
+
+#endregion
 
 namespace nsplit
 {
     internal class Program
     {
-        public static AdjacencyMatrix DependencyGraph;
-        public static Tree TypeTree;
-
-
         private static void Main(string[] args)
         {
+            const string  folderPath = @"c:\temp\tia\";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.UI";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Compare.Core";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.Core";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.BL";
+            //const string assemblyToAnalyze = "Siemens.Automation.CommonServices.Library.BL";
+            RegisterFolderResolver(folderPath);
+           //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
+
             Assembly assembly = typeof(Program).Assembly;
 
-            //-----------------------------------------
-            var typeTreeBuilder = new TypeTreeBuilder();
-            typeTreeBuilder.Add(assembly);
-            TypeTree = typeTreeBuilder.Tree;
-
-            var dependen = new DependencyGraphBuilder(TypeTree);
-            dependen.Add(assembly);
-            DependencyGraph = dependen.AdjacencyMatrix;
-            //-----------------------------------------
-
+            Registry.Build(assembly);
 
             var config = new HttpSelfHostConfiguration("http://localhost:8080");
 
@@ -50,7 +48,8 @@ namespace nsplit
                 FileType.Css,
                 FileType.Javascript,
                 FileType.Gif,
-                FileType.Png);
+                FileType.Png,
+                FileType.Json);
 
             config.MessageHandlers.Add(webServerOnFolder);
             config.Routes.MapHttpRoute(
@@ -70,10 +69,25 @@ namespace nsplit
                     Process.Start("readme.html");
                     return;
                 }
-                Process.Start("http://localhost:8080/index.html");
-                Console.WriteLine("Press any key to quit.");
+                Process.Start("http://localhost:8080/index2.html");
                 Console.ReadKey();
             }
+        }
+
+        private static void RegisterFolderResolver(string folderPath)
+        {
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
+            {
+                var name = resolveArgs.Name;
+                var fileName = name.Substring(0, name.IndexOf(',')) + ".dll";
+
+                string fullPath = Path.Combine(folderPath, fileName);
+                if (!File.Exists(fullPath))
+                {
+                    return null;
+                }
+                return Assembly.LoadFile(fullPath);
+            };
         }
 
         private static string GetExePath()

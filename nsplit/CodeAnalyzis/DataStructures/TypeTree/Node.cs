@@ -12,7 +12,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
         private readonly Dictionary<string, Node> m_ChildNodes;
         private readonly Dictionary<string, Leaf> m_Leafs;
 
-        internal Node(string name, int id) : base(name, id)
+        internal Node(string name, int id, Node node) : base(name, id, node)
         {
             m_ChildNodes = new Dictionary<string, Node>();
             m_Leafs = new Dictionary<string, Leaf>();
@@ -39,7 +39,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
             bool isOk = m_ChildNodes.TryGetValue(name, out node);
             if (!isOk)
             {
-                node = factory.CreateNode(name);
+                node = factory.CreateNode(name, this);
                 m_ChildNodes.Add(name, node);
             }
             return node.GetOrCreate(nodeNames, factory);

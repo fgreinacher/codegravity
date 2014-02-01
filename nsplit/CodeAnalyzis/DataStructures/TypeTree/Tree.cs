@@ -1,7 +1,6 @@
 ﻿#region usings
 
 using System.Collections.Generic;
-using System.Runtime.Remoting;
 
 #endregion
 
@@ -16,7 +15,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
         public Tree(NodeFactory nodeFactory)
         {
             m_NodeFactory = nodeFactory;
-            m_Root = m_NodeFactory.CreateNode(string.Empty);
+            m_Root = m_NodeFactory.CreateNode(string.Empty, null);
         }
 
         public INode Add(string fullName)
@@ -24,14 +23,9 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
             var qualifiedName = QualifiedName.Parse(fullName);
             var names = new Queue<string>(qualifiedName.Nodes);
             var node = m_Root.GetOrCreate(names, m_NodeFactory);
-            var leaf = m_NodeFactory.CreateLeaf(qualifiedName.Leaf);
+            var leaf = m_NodeFactory.CreateLeaf(qualifiedName.Leaf, node);
             node.AddLeaf(leaf);
             return leaf;
-        }
-
-        public bool TryGet(int id, out INode leaf)
-        {
-            return m_NodeFactory.TryGetNode(id, out leaf);
         }
 
         public bool TryGet(string fullName, out INode leaf)
@@ -56,8 +50,13 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
         {
             get
             {
-                return m_NodeFactory.Counter;
+                return m_NodeFactory.Count;
             }
+        }
+
+        public IEnumerable<INode> Nodes
+        {
+            get { return m_NodeFactory.Nodes; }
         }
     }
 }

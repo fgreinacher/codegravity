@@ -12,6 +12,7 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
         string Name { get; }
         IEnumerable<INode> Children();
         bool IsLeaf();
-        IEnumerable<INode> GetLeafsRecursively();
+        IEnumerable<INode> Leafs();
+        IEnumerable<INode> Path();
     }
 }

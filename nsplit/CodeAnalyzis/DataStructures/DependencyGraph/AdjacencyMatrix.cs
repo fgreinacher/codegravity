@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using nsplit.CodeAnalyzis.DataStructures.TypeTree;
+﻿#region usings
+
+using System.Collections.Generic;
+
+#endregion
 
 namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
 {
@@ -13,20 +15,19 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
             m_Matrix = new DependencyKinds[count, count];
         }
 
-        public void Add(Edge edge)
+        public bool Add(int source, int target, DependencyKind kind, out Edge edge)
         {
-            Add(edge.Source, edge.Target, edge.Kinds);
+            return Add(source, target, kind.ToFlags(), out edge);
         }
 
-        public void Add(int source, int target, DependencyKind kind)
+        public bool Add(int source, int target, DependencyKinds kinds, out Edge edge)
         {
-            Add(source, target, kind.ToFlags());
-        }
-
-        public void Add(int source, int target, DependencyKinds kinds)
-        {
+            edge = null;
             var value = m_Matrix[source, target];
+            if (value == kinds) return false;
             m_Matrix[source, target] = value | kinds;
+            edge = new Edge(source, target, kinds);
+            return true;
         }
 
         public IEnumerable<Edge> Out(int id)
@@ -49,12 +50,17 @@ namespace nsplit.CodeAnalyzis.DataStructures.DependencyGraph
             }
         }
 
-        public IEnumerable<Edge> All(INode node)
+        public IEnumerable<Edge> All()
         {
-            var allLeafs = node.GetLeafsRecursively().ToArray();
-            var outDeps = allLeafs.SelectMany(n => Program.DependencyGraph.Out(node.Id));
-            var inDeps = allLeafs.SelectMany(n => Program.DependencyGraph.In(node.Id));
-            return outDeps.Concat(inDeps).SelectMany(e => e.FlattenFlags()).Distinct();
+            for (int i = 0; i < m_Matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < m_Matrix.GetLength(1); j++)
+                {
+                    var value = m_Matrix[i, j];
+                    if (value == DependencyKinds.None) continue;
+                    yield return new Edge(i, j, value);
+                }
+            }
         }
     }
 }

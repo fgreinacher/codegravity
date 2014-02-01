@@ -11,12 +11,14 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
     internal abstract class NodeBase : INode
     {
         private readonly int m_Id;
+        private readonly NodeBase m_Parent;
         private readonly string m_Name;
 
-        internal NodeBase(string name, int id)
+        internal NodeBase(string name, int id, NodeBase parent)
         {
             m_Name = name;
             m_Id = id;
+            m_Parent = parent;
         }
 
         public int Id
@@ -29,18 +31,33 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
             get { return m_Name; }
         }
 
+        public NodeBase Parent
+        {
+            get { return m_Parent; }
+        }
+
         public abstract IEnumerable<INode> Children();
         public abstract bool IsLeaf();
 
-        public IEnumerable<INode> GetLeafsRecursively()
+        public IEnumerable<INode> Leafs()
         {
             if (IsLeaf()) yield return this;
             foreach (var child in Children())
             {
-                foreach (var leaf in child.GetLeafsRecursively())
+                foreach (var leaf in child.Leafs())
                 {
                     yield return leaf;
                 }
+            }
+        }
+
+        public IEnumerable<INode> Path()
+        {
+            var current = this;
+            while (current!=null)
+            {
+                yield return current;
+                current = current.Parent;
             }
         } 
     }

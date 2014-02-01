@@ -22,20 +22,8 @@ namespace nsplit.CodeAnalyzis
                     .Where(t => !t.IsCompilerGenerated());
         }
 
-        public static IEnumerable<Dependency> Dependecies(this Type type)
-        {
-            Console.WriteLine("START: [{0}] ...", type);
-            IEnumerable<Dependency> result =
-                type.Implements()
-                    .Concat(type.Uses())
-                    .Concat(type.Calls());
-            Console.WriteLine("END: [{0}] ...", type);
-            return result;
-        }
-
         public static IEnumerable<Dependency> Calls(this Type type)
         {
-            Console.WriteLine("Calls of type [{0}] ...", type);
             return
                 type
                     .Methods()
@@ -46,7 +34,6 @@ namespace nsplit.CodeAnalyzis
 
         public static IEnumerable<Dependency> Uses(this Type type)
         {
-            Console.WriteLine("Uses of type [{0}] ...", type);
             IEnumerable<Type> fieldUses =
                 type
                     .Fields()
@@ -74,7 +61,6 @@ namespace nsplit.CodeAnalyzis
 
         public static IEnumerable<Dependency> Implements(this Type type)
         {
-            Console.WriteLine("Implements of type [{0}] ...", type);
             return
                 Once(type.BaseType)
                     .Concat(type.GetInterfaces())

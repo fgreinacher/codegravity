@@ -8,42 +8,35 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
 {
     internal class NodeFactory
     {
-        private int m_GlobalCounter;
-        private readonly Dictionary<int, INode> m_NodesById;
+        private readonly Stack<INode> m_Nodes;
 
         public NodeFactory()
         {
-            m_NodesById = new Dictionary<int, INode>();
+            m_Nodes =new Stack<INode>();
         }
 
-        public int Counter
+        public int Count
         {
-            get { return m_GlobalCounter; }
+            get { return m_Nodes.Count; }
         }
 
-        public bool TryGetNode(int id, out INode node)
+        public IEnumerable<INode> Nodes
         {
-            return m_NodesById.TryGetValue(id, out node);
+            get { return m_Nodes; }
         }
 
-        public Node CreateNode(string name)
+        public Node CreateNode(string name, Node parent)
         {
-            var node = new Node(name, m_GlobalCounter);
-            RegisterNode(node);
+            var node = new Node(name, Count, parent);
+            m_Nodes.Push(node);
             return node;
         }
 
-        public Leaf CreateLeaf(string name)
+        public Leaf CreateLeaf(string name, Node parent)
         {
-            var leaf = new Leaf(name, m_GlobalCounter);
-            RegisterNode(leaf);
+            var leaf = new Leaf(name, Count, parent);
+            m_Nodes.Push(leaf);
             return leaf;
-        }
-
-        private void RegisterNode(NodeBase node)
-        {
-            m_NodesById.Add(m_GlobalCounter, node);
-            m_GlobalCounter++;
         }
     }
 }

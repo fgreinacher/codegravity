@@ -10,6 +10,7 @@ namespace nsplit.Helper
         public static FileType Css = new FileType(".css", MediaTypeNames.Text.Plain);
         public static FileType Gif = new FileType(".gif", MediaTypeNames.Image.Gif);
         public static FileType Png = new FileType(".png", "image/png");
+        public static FileType Json = new FileType(".json", MediaTypeNames.Text.Plain);
 
         
         private readonly string m_Extension;

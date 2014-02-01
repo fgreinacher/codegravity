@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
-MinimumVisualStudioVersion = 10.0.40219.1
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Depender.Parser", "Depender.Parser\Depender.Parser.csproj", "{4F7E0C60-13E1-402A-B79B-4CF337885CBA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gma.CodeGravity.Tests", "Gma.CodeGravity.Tests\Gma.CodeGravity.Tests.csproj", "{8AA40642-7259-45BC-B96D-A0EE4B6CC68E}"

@@ -67,17 +67,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
+    <Compile Include="CodeAnalyzis\BuildProgressEventArgs.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\AdjacencyMatrix.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependecyKindExtensions.cs" />
-    <Compile Include="CodeAnalyzis\DependencyGraphBuilder.cs" />
+    <Compile Include="CodeAnalyzis\DependencyGraph.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependencyKinds.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Edge.cs" />
-    <Compile Include="CodeAnalyzis\TypeTreeBuilder.cs" />
     <Compile Include="Api\DependenciesController.cs" />
     <Compile Include="CodeAnalyzis\Dependency.cs" />
     <Compile Include="CodeAnalyzis\DependencyKind.cs" />
     <Compile Include="Api\Dto\EdgeDto.cs" />
-    <Compile Include="Api\Dto\VertexDto.cs" />
+    <Compile Include="CodeAnalyzis\EdgeAddedEventArgs.cs" />
     <Compile Include="CodeAnalyzis\Implements.cs" />
     <Compile Include="CodeAnalyzis\MethodCall.cs" />
     <Compile Include="Api\Dto\NodeDto.cs" />
@@ -90,6 +90,7 @@
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeFactory.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\QualifiedName.cs" />
     <Compile Include="Helper\FileType.cs" />
+    <Compile Include="Registry.cs" />
     <None Include="html\css\main.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -161,6 +162,15 @@
       <Link>AutoMapper.Net4.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="html\js\main2.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="html\index2.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="html\js\lib\d3.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
