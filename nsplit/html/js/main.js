@@ -28,6 +28,11 @@ d3.json("api/treeview/deep", function(json) {
     root.x = w / 2;
     root.y = h / 2 - 80;
 
+    nodesById = flatten(root, function (node) {
+        return node.children;
+    });
+
+    nodesById = indexNodes(nodesById);
 
     $('#typetree')
         .jstree({
@@ -97,43 +102,34 @@ function flatten(node, deep) {
         : [node];
 }
 
-;
 
+function indexNodes(nodes) {
+    var nodesByName = [];
+    nodes.forEach(function (n) {
+        nodesByName[n.id] = n;
+    });
+    return nodesByName;
+}
 
 function getLinks() {
 
     var links = [];
     var matrix = [];
 
-    var allNodes = flatten(root, function(node) {
-        return node.children;
-    });
-
     var visibleNodes = flatten(root, function(node) {
         return node.isExpanded ? node.children : [];
     });
-
-    allNodes = indexNodes(allNodes);
-    nodesById = allNodes;
     visibleNodes = indexNodes(visibleNodes);
 
-    function indexNodes(nodes) {
-        var nodesByName = [];
-        nodes.forEach(function(n) {
-            nodesByName[n.id] = n;
-        });
-        return nodesByName;
-    }
 
     rawLinks.forEach(function(l) {
 
-        function getVisibleNode(id, count) {
-            if (count > 100) return null; //TODO Check why ?
+        function getVisibleNode(id) {
             var node = visibleNodes[id];
             if (node) return node;
-            node = allNodes[id];
+            node = nodesById[id];
             var parent = node.parent;
-            if (parent) return getVisibleNode(parent.id, count + 1);
+            if (parent) return getVisibleNode(parent.id);
             return null;
         }
 
