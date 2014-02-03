@@ -19,61 +19,41 @@ var vis = d3.select("#viewport")
 
 var root;
 var rawLinks = [];
-var nodesById = [];
+var verticesById = [];
 
-d3.json("api/treeview/deep", function(json) {
+d3.json("api/treeview/deep", function(jsonRoot) {
 
-    root = json;
+    root = new Vertex(jsonRoot);
     root.fixed = true;
     root.x = w / 2;
     root.y = h / 2 - 80;
 
-    nodesById = flatten(root, function (node) {
-        return node.children;
-    });
-
-    nodesById = indexNodes(nodesById);
+    verticesById = root
+        .subtree()
+        .indexById();
 
     $('#typetree')
         .jstree({
             'core': {
                 'data':
-                    root
+                   jsonRoot
             }
         })
         .on('open_node.jstree', function(e, data) {
-            var vertex = nodesById[data.node.original.id];
-            if (!vertex.isExpanded) toggleNode(vertex);
+            var vertex = verticesById[data.node.original.id];
+            if (!vertex.isExpanded) click(vertex);
         })
         .on('close_node.jstree', function(e, data) {
             var n = data.node;
             if (!n.children) return;
             n.children.forEach(function(el) { data.instance.close_node(el); });
-            var vertex = nodesById[n.original.id];
-            if (vertex.isExpanded) toggleNode(vertex);
+            var vertex = verticesById[n.original.id];
+            if (vertex.isExpanded) click(vertex);
         });
 
 
-    root.size = normalize(root);
-
-    //set parent, eliminate empty children[], caclculate size - recursively
-
-    function normalize(node) {
-        node.size = 1;
-        node.isExpanded = false;
-        if (node.children) {
-            for (var i = 0; i < node.children.length; i++) {
-                var child = node.children[i];
-                child.parent = node;
-                node.size += normalize(child);
-            }
-            if (node.children.length == 0) node.children = null;
-        }
-        return node.size;
-    }
-
-    var top20 =
-        flatten(root, function(n) { return n.children; })
+    var top20 = verticesById
+            .slice(0)
             .sort(function(n) { return n.children ? -n.size : 0; })
             .slice(0, 20);
 
@@ -91,50 +71,23 @@ d3.json("api/treeview/deep", function(json) {
 });
 
 
-function flatten(node, deep) {
-    return deep(node)
-        ? [node].concat(
-            deep(node)
-                .reduce(
-                    function(s, e) {
-                        return s.concat(flatten(e, deep));
-                    }, []))
-        : [node];
-}
-
-
-function indexNodes(nodes) {
-    var nodesByName = [];
-    nodes.forEach(function (n) {
-        nodesByName[n.id] = n;
-    });
-    return nodesByName;
-}
-
-function getLinks() {
+function getLinks(visibleNodes) {
 
     var links = [];
     var matrix = [];
 
-    var visibleNodes = flatten(root, function(node) {
-        return node.isExpanded ? node.children : [];
-    });
-    visibleNodes = indexNodes(visibleNodes);
-
-
-    rawLinks.forEach(function(l) {
-
-        function getVisibleNode(id) {
+    rawLinks.forEach(function (l) {
+        function getVisibleSelfOrParent(id) {
             var node = visibleNodes[id];
             if (node) return node;
-            node = nodesById[id];
+            node = verticesById[id];
             var parent = node.parent;
-            if (parent) return getVisibleNode(parent.id);
+            if (parent) return getVisibleSelfOrParent(parent.id);
             return null;
         }
 
-        var source = getVisibleNode(l.source, 0);
-        var target = getVisibleNode(l.target, 0);
+        var source = getVisibleSelfOrParent(l.source, 0);
+        var target = getVisibleSelfOrParent(l.target, 0);
 
         if (!source || !target) return;
         if (!matrix[source.id]) matrix[source.id] = [];
@@ -147,21 +100,18 @@ function getLinks() {
 }
 
 function update() {
-    var nodes = visibleNodes(root),
-        links = getLinks(); // d3.layout.tree().links(nodes);
+    var nodes = root.leafsDeep();
+    var links = getLinks(nodes.indexById());
 
-    // Restart the force layout.
     force
         .nodes(nodes)
         .links(links)
         .start();
 
-    // Update the links…
-    link = vis.selectAll("line.link")
-        //.data(links, function(d) { return d.target.id; });
+    link = vis
+        .selectAll("line.link")
         .data(links);
 
-    // Enter any new links.
     link.enter().insert("svg:line", ".node")
         .attr("class", "link")
         .attr("x1", function(d) { return d.source.x; })
@@ -169,34 +119,22 @@ function update() {
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 
-    // Exit any old links.
     link.exit().remove();
 
-    // Update the nodes…
     node = vis.selectAll("circle.node")
         .data(nodes, function(d) { return d.id; })
-        .style("fill", colorD);
+        .style("fill", function(d) { return d.getColor(); });
 
-    //node.transition()
-    //    .attr("r", function (d) { return d.visibleChildren ? 4.5 : Math.sqrt(1000 / root.size * d.size); });
-
-    // Enter any new nodes.
     node.enter().append("svg:circle")
         .attr("class", "node")
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-        .attr("r", function(d) { return d.isExpanded ? 4.5 : Math.max(Math.sqrt(1000 / root.size * d.size), 3); })
-        .style("fill", colorD)
-        .on("click", toggleNode)
+        .attr("r", function(d) { return d.getRadius(); })
+        .style("fill", function (d) { return d.getColor(); })
+        .on("click", click)
         .on("mouseover", mouseOver)
         .call(force.drag);
-    //.append("text")
-    //.attr("class", "text")
-    //.attr("x", 12)
-    //.attr("dy", ".35em")
-    //.text(function(d) { return d.text; });
 
-    // Exit any old nodes.
     node.exit().remove();
 }
 
@@ -210,68 +148,13 @@ function tick() {
         .attr("cy", function(d) { return d.y; });
 }
 
-function colorD(d) {
-    return d.color
-        ? d.color
-        : d.parent.color;
-    //return d.children ? color(d.id) : d.visibleChildren ? "#c6dbef" : color(d.parent.id);
-}
-
-
-// Toggle children on click.
-
 function mouseOver(d) {
     var tree = $('#typetree').jstree(true);
     tree.deselect_all();
     tree.select_node(d, true);
 }
 
-function toggleNode(d) {
-    if (d.isExpanded) implode(d);
-    else explode(d);
-    d.isExpanded = !d.isExpanded;
+function click(d) {
+    d.toggle();
     update();
 }
-
-function explode(d) {
-    if (d.children == null) return;
-    var segment = 2 * Math.PI / d.children.length;
-    var angle = 0;
-    d.children.forEach(function(child) {
-        {
-            angle += segment;
-            child.x = d.x + 10 * Math.sin(angle);
-            child.y = d.y + 10 * Math.cos(angle);
-        }
-    });
-}
-
-function implode(d) {
-    if (d.children == null) return;
-    var sumX = 0;
-    var sumY = 0;
-    d.children.forEach(function(child) {
-        {
-            sumX += child.x;
-            sumY += child.y;
-        }
-        d.x = sumX / d.children.length;
-        d.Y = sumY / d.children.length;
-    });
-}
-
-function visibleNodes(node) {
-    return node.isExpanded && node.children
-        ?
-        node
-            .children
-            .reduce(
-                function(s, e) {
-                    return s.concat(visibleNodes(e));
-                }, [])
-        : [node];
-}
-
-$(document).ready(function() {
-
-});
