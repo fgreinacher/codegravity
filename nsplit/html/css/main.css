@@ -6,11 +6,22 @@
     width: 100vw; /* As above. */
 }
 
-#typetree {
-    float: right;
+#right {
+    float: left;
     height: 100vh;
-    overflow-y: scroll;
     width: 25vw;
+    overflow: hidden; 
+}
+
+#toolbar {
+    float: left;    
+}
+
+#typetree {
+    float:left;
+    height: 100%;
+    overflow-y: scroll;
+    width: 100%;
 }
 
 #viewport {
@@ -21,8 +32,8 @@
 
 .node {
     stroke: #fff;
-    stroke-width: 2px;
     stroke-opacity: .75;
+    stroke-width: 2px;
 }
 
 .link {
@@ -31,9 +42,9 @@
 }
 
 .hint {
+    background: #ffff00;
+    color: blue;
     font: 10px sans-serif;
     font-weight: bolder;
-    color: blue;
     pointer-events: none;
-    background:#ffff00
 }

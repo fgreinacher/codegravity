@@ -82,14 +82,11 @@ Vertex.prototype.toggle = function() {
 Vertex.prototype.explode = function() {
     if (this.children == null) return;
     var vertex=this;
-    var segment = 2 * Math.PI / (this.children.length + 1);
-    var angle = 0;
     var radius = this.getRadius();
     this.children.forEach(function(child) {
         {
-            child.x = vertex.x + (radius * Math.sin(angle));
-            child.y = vertex.y + (radius * Math.cos(angle));
-            angle += segment;
+            child.x = vertex.x + radius * (Math.random() - .5);
+            child.y = vertex.y + radius * (Math.random() - .5);
         }
     });
     this.isExpanded = true;

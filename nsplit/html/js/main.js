@@ -33,7 +33,7 @@ d3.json("api/treeview/deep", function(jsonRoot) {
             "checkbox": {
                 "keep_selected_style": false
             },
-            "plugins": ["checkbox"]
+            "plugins": ["checkbox", "search"]
         })
         .on('open_node.jstree', function(e, data) {
             var vertex = verticesById[data.node.original.id];
@@ -54,6 +54,18 @@ d3.json("api/treeview/deep", function(jsonRoot) {
             update();
         });
 
+
+    var timeout = false;
+    $('#searchbar')
+        .keyup(function() {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(function() {
+                var searchText = $('#searchbar').val();
+                $('#typetree').jstree(true).search(searchText);
+            }, 250);
+        });
 
     d3.json("api/dependencies/links", function(jsonLinks) {
         rawLinks = jsonLinks;
@@ -218,8 +230,8 @@ function resize() {
     root.x = w / 2;
     root.y = h / 2;
     vis
-        .attr("width", viewport.clientWidth)
-        .attr("height", viewport.clientHeight);
+        .attr("width", w)
+        .attr("height", h);
 
     force
         .size([w, h])

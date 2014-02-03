@@ -148,6 +148,9 @@
       <Link>AutoMapper.Net4.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="html\css\s.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="html\js\vertex.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
