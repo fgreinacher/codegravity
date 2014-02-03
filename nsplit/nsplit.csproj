@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Dto\LinkDto.cs" />
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
     <Compile Include="CodeAnalyzis\BuildProgressEventArgs.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\AdjacencyMatrix.cs" />

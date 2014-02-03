@@ -6,7 +6,6 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Web.Http;
 using AutoMapper;
 using nsplit.Api.Dto;
@@ -46,22 +45,6 @@ namespace nsplit.Api
                 .GetNode(id)
                 .Path()
                 .Select(n => n.Id);
-        }
-    }
-
-    [DataContract]
-    public class LinkDto
-    {
-        [DataMember(Name = "source")]
-        public int Source { get; set; }
-
-        [DataMember(Name = "target")]
-        public int Target { get; set; }
-
-        [DataMember(Name = "value")]
-        public int Value
-        {
-            get { return 1; }
         }
     }
 }
