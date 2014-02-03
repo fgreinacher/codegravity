@@ -34,17 +34,18 @@
     stroke: #fff;
     stroke-opacity: .75;
     stroke-width: 2px;
+    cursor: pointer;
 }
 
 .link {
     stroke: #999;
     stroke-opacity: .6;
+    cursor: pointer;
 }
 
 .hint {
-    background: #ffff00;
     color: blue;
-    font: 10px sans-serif;
-    font-weight: bolder;
+    font-family: Arial;
+    font-size: smaller;
     pointer-events: none;
 }
