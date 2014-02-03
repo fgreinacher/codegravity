@@ -71,6 +71,11 @@ d3.json("api/treeview/deep", function(jsonRoot) {
         rawLinks = jsonLinks;
         resize();
         update();
+        var current = root;
+        while (current.children!=null && current.children.length==1) {
+            click(current);
+            current = current.children[0];
+        }
     });
 });
 
