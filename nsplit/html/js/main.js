@@ -1,34 +1,24 @@
 ﻿// This code is distributed under MIT license. 
 // Copyright (c) 2014 George Mamaladze, Florian Greinacher
 // See license.txt or http://opensource.org/licenses/mit-license.php
-
-var w = 1280,
-    h = 800,
-    node,
-    link,
-    root;
-
-var force = d3.layout.force()
-    .on("tick", tick)
-    .size([w, h - 160]);
-
-var vis = d3.select("#viewport")
-    .append("svg:svg")
-    .attr("width", w)
-    .attr("height", h);
-
+var node;
+var link;
 var root;
 var rawLinks = [];
 var verticesById = [];
+
+var vis = d3.select("#viewport").append("svg:svg");
+window.onresize = resize;
+
+var force = d3.layout.force()
+    .on("tick", tick);
 
 d3.json("api/treeview/deep", function(jsonRoot) {
 
     root = new Vertex(jsonRoot);
     root.fixed = true;
-    root.x = w / 2;
-    root.y = h / 2 - 80;
     root.selected = [];
-
+   
     var vertices = root.subtree();
     assignColorsToTop20(vertices);
 
@@ -61,13 +51,13 @@ d3.json("api/treeview/deep", function(jsonRoot) {
             data.selected.forEach(function (el) {
                 root.selected[el] = true;
             });
-            
             update();
         });
 
 
     d3.json("api/dependencies/links", function(jsonLinks) {
         rawLinks = jsonLinks;
+        resize();
         update();
     });
 });
@@ -219,4 +209,19 @@ function hideTexts() {
 function click(d) {
     d.toggle();
     update();
+}
+
+function resize() {
+    var viewport = $("#viewport")[0];
+    var w = viewport.clientWidth;
+    var h = viewport.clientHeight;
+    root.x = w / 2;
+    root.y = h / 2;
+    vis
+        .attr("width", viewport.clientWidth)
+        .attr("height", viewport.clientHeight);
+
+    force
+        .size([w, h])
+        .resume();
 }
