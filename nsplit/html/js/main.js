@@ -175,22 +175,24 @@ function tick() {
 }
 
 function lineMouseOver(l) {
+    hideTexts();
     showText(l.source);
     showText(l.target);
 }
 
 function lineMouseOut(l) {
-    hideTexts();
+    hideTextsAsync();
 }
 
 function vertexMouseOver(d) {
+    hideTexts();
     showText(d);
     var tree = $('#typetree').jstree(true);
     tree.select_node(d, true, false);
 }
 
 function vertexMouseOut(d) {
-    hideTexts();
+    hideTextsAsync();
     var tree = $('#typetree').jstree(true);
     tree.deselect_node(d, true, false);
 }
@@ -202,6 +204,12 @@ function showText(d) {
         .attr("x", d.x + d.getRadius() + 1)
         .attr("y", d.y)
         .text(d.fullName());
+}
+
+function hideTextsAsync() {
+    setTimeout(function() {
+        hideTexts();
+    }, 500);
 }
 
 function hideTexts() {
