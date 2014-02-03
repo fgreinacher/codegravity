@@ -22,8 +22,9 @@ namespace nsplit
     {
         private static void Main(string[] args)
         {
-            const string folderPath = @"c:\temp\tia\";
+            const string folderPath = @"c:\temp\tia\bin\";
             RegisterFolderResolver(folderPath);
+            //string assemblyToAnalyze = "Siemens.Automation.CommonServices";
             //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
 
             Assembly assembly = typeof (Program).Assembly;
@@ -75,12 +76,16 @@ namespace nsplit
             AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
             {
                 var name = resolveArgs.Name;
-                var fileName = name.Substring(0, name.IndexOf(',')) + ".dll";
+                var fileName = name.Substring(0, name.IndexOf(','));
 
-                string fullPath = Path.Combine(folderPath, fileName);
+                string fullPath = Path.Combine(folderPath, fileName + ".dll");
                 if (!File.Exists(fullPath))
                 {
-                    return null;
+                    fullPath = Path.Combine(folderPath, fileName + ".exe");
+                    if (!File.Exists(fullPath))
+                    {
+                        return null;
+                    }
                 }
                 return Assembly.LoadFile(fullPath);
             };

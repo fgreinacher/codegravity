@@ -21,7 +21,8 @@
 
 .node {
     stroke: #fff;
-    stroke-width: 1.5px;
+    stroke-width: 2px;
+    stroke-opacity: .75;
 }
 
 .link {
@@ -29,7 +30,10 @@
     stroke-opacity: .6;
 }
 
-.rollout {
+.hint {
     font: 10px sans-serif;
+    font-weight: bolder;
+    color: blue;
     pointer-events: none;
+    background:#ffff00
 }

@@ -27,17 +27,23 @@ d3.json("api/treeview/deep", function(jsonRoot) {
     root.fixed = true;
     root.x = w / 2;
     root.y = h / 2 - 80;
+    root.selected = [];
 
-    verticesById = root
-        .subtree()
-        .indexById();
+    var vertices = root.subtree();
+    assignColorsToTop20(vertices);
 
-    $('#typetree')
+    verticesById = vertices.indexById();
+
+    $("#typetree")
         .jstree({
-            'core': {
-                'data':
-                   jsonRoot
-            }
+            "core": {
+                "data":
+                    jsonRoot
+            },
+            "checkbox": {
+                "keep_selected_style": false
+            },
+            "plugins": ["checkbox"]
         })
         .on('open_node.jstree', function(e, data) {
             var vertex = verticesById[data.node.original.id];
@@ -49,12 +55,31 @@ d3.json("api/treeview/deep", function(jsonRoot) {
             n.children.forEach(function(el) { data.instance.close_node(el); });
             var vertex = verticesById[n.original.id];
             if (vertex.isExpanded) click(vertex);
+        })
+        .on('changed.jstree', function (e, data) {
+            root.selected = [];
+            data.selected.forEach(function (el) {
+                root.selected[el] = true;
+            });
+            
+            update();
         });
 
 
-    var top20 = verticesById
-            .slice(0)
-            .sort(function(n) { return n.children ? -n.size : 0; })
+    d3.json("api/dependencies/links", function(jsonLinks) {
+        rawLinks = jsonLinks;
+        update();
+    });
+});
+
+
+function assignColorsToTop20(vertices) {
+        var top20 = vertices
+            .sort(function (a, b) {
+                var diff = b.size - a.size;
+                if (diff == 0) return b.children;
+                return diff;
+            })
             .slice(0, 20);
 
     var colors20 = d3.scale.category20();
@@ -63,12 +88,7 @@ d3.json("api/treeview/deep", function(jsonRoot) {
         if (top20[i].size != 1)
             top20[i].color = colors20(i);
     }
-
-    d3.json("api/dependencies/links", function(jsonLinks) {
-        rawLinks = jsonLinks;
-        update();
-    });
-});
+}
 
 
 function getLinks(visibleNodes) {
@@ -117,7 +137,9 @@ function update() {
         .attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+        .attr("y2", function (d) { return d.target.y; })
+        .on("mouseover", lineMouseOver)
+        .on("mouseout", lineMouseOut);
 
     link.exit().remove();
 
@@ -131,27 +153,59 @@ function update() {
         .attr("cy", function(d) { return d.y; })
         .attr("r", function(d) { return d.getRadius(); })
         .style("fill", function (d) { return d.getColor(); })
+        .style("stroke", function(d) { return root.selected[d.id] ? "#ff00ff" : "#fff"; })
         .on("click", click)
-        .on("mouseover", mouseOver)
+        .on("mouseover", vertexMouseOver)
+        .on("mouseout", vertexMouseOut)
         .call(force.drag);
 
     node.exit().remove();
 }
 
 function tick() {
+    
     link.attr("x1", function(d) { return d.source.x; })
         .attr("y1", function(d) { return d.source.y; })
         .attr("x2", function(d) { return d.target.x; })
         .attr("y2", function(d) { return d.target.y; });
 
     node.attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; });
+        .attr("cy", function (d) { return d.y; })
+        .style("stroke", function(d) { return root.selected[d.id] ? "#ff00ff" : "#fff"; });
 }
 
-function mouseOver(d) {
+function lineMouseOver(l) {
+    showText(l.source);
+    showText(l.target);
+}
+
+function lineMouseOut(l) {
+    hideTexts();
+}
+
+function vertexMouseOver(d) {
+    showText(d);
     var tree = $('#typetree').jstree(true);
-    tree.deselect_all();
-    tree.select_node(d, true);
+    tree.select_node(d, true, false);
+}
+
+function vertexMouseOut(d) {
+    hideTexts();
+    var tree = $('#typetree').jstree(true);
+    tree.deselect_node(d, true, false);
+}
+
+function showText(d) {
+    vis
+        .insert("text")
+        .attr("class", "hint")
+        .attr("x", d.x + d.getRadius() + 1)
+        .attr("y", d.y)
+        .text(d.fullName());
+}
+
+function hideTexts() {
+    vis.selectAll("text.hint").remove();
 }
 
 function click(d) {

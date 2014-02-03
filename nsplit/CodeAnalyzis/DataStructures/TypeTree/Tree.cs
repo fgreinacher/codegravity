@@ -16,10 +16,10 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
 
         private readonly Node m_Root;
 
-        public Tree(NodeFactory nodeFactory)
+        public Tree(NodeFactory nodeFactory, string rootName)
         {
             m_NodeFactory = nodeFactory;
-            m_Root = m_NodeFactory.CreateNode(string.Empty, null);
+            m_Root = m_NodeFactory.CreateNode(rootName, null);
         }
 
         public int Count

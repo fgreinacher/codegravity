@@ -37,7 +37,8 @@ namespace nsplit.CodeAnalyzis
         public static DependencyGraph StartBuildAsync(Assembly assembly)
         {
             var types = assembly.Types().ToArray();
-            var tree = BuildTree(types);
+            var rootName = assembly.GetName().Name;
+            var tree = BuildTree(types, rootName);
             var nodesById = tree.Nodes.Reverse().ToArray();
             var matrix = new AdjacencyMatrix(nodesById.Length);
             var graph = new DependencyGraph(tree, types, matrix, nodesById);
@@ -49,10 +50,10 @@ namespace nsplit.CodeAnalyzis
         }
 
 
-        private static Tree BuildTree(IEnumerable<Type> types)
+        private static Tree BuildTree(IEnumerable<Type> types, string rootName)
         {
             var nodeFactory = new NodeFactory();
-            var tree = new Tree(nodeFactory);
+            var tree = new Tree(nodeFactory, rootName);
 
             foreach (var type in types)
             {

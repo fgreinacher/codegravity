@@ -114,11 +114,36 @@ Vertex.prototype.getRadius = function() {
     return this.isExpanded
         ? 4.5
         : Math.max(Math.sqrt(1000 / root.size * this.size), 3);
-}
+};
 
 
 Vertex.prototype.getColor = function() {
-    return this.color
-        ? this.color
-        : this.parent.color;
-}
+    return this.isSelected 
+            ? "#000"
+            : this.color
+                ? this.color
+                : this.parent.color;
+};
+
+Vertex.prototype.getClass = function() {
+    return this.isSelected
+        ? "selectedNode"
+        : "node";
+};
+
+Vertex.prototype.setIsSelectedDeep = function(isSelected) {
+    this.isSelected = isSelected;
+    if (!this.children) return;
+    this.children.forEach(function(child) { child.setIsSelectedDeep(isSelected); });
+};
+
+
+Vertex.prototype.fullName = function () {
+    var current = this;
+    var path = [];
+    while (current != null && current.parent!=null) {
+        path.push(current.text);
+        current = current.parent;
+    }
+    return path.reverse().join(".");
+};
