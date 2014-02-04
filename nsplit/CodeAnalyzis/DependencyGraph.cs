@@ -67,6 +67,7 @@ namespace nsplit.CodeAnalyzis
         {
             DoBuildTask(m_Types, AnalyzerExtensions.Uses, "Analyzing uses");
             DoBuildTask(m_Types, AnalyzerExtensions.Implements, "Analyzing implements");
+            DoBuildTask(m_Types, AnalyzerExtensions.Contains, "Analyzing contain");
             DoBuildTask(m_Types, AnalyzerExtensions.Calls, "Analyzing calls");
         }
 

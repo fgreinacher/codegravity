@@ -66,6 +66,8 @@
     <Compile Include="TestData\TypeWithFieldOfTypeTupleIntFloat.cs" />
     <Compile Include="TestData\TypeWithMethodAcceptingIEnumerableOfChar.cs" />
     <Compile Include="TestData\TypeWithMethodReturnIEnumerableOfInt.cs" />
+    <Compile Include="TestData\TypeWithPrivateNestedType.cs" />
+    <Compile Include="TestData\TypeWithPublicNestedType.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\nsplit\nsplit.csproj">

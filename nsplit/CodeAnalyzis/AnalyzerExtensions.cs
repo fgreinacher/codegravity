@@ -22,7 +22,8 @@ namespace nsplit.CodeAnalyzis
             return
                 assembly
                     .GetTypes()
-                    .Where(t => !t.IsCompilerGenerated());
+                    .Where(t => !t.IsCompilerGenerated())
+                    .Where(t => !t.IsNestedPrivate);
         }
 
         public static IEnumerable<Dependency> Calls(this Type type)
@@ -32,7 +33,7 @@ namespace nsplit.CodeAnalyzis
                     .Methods()
                     .SelectMany(method => method.MethodCalls())
                     .Select(methodCall => new MethodCall(type, methodCall.ReflectedType, methodCall))
-                    .Where(call => call.Target != type && !call.Target.IsNestedPrivate);
+                    .Where(call => call.Target != type);
         }
 
         public static IEnumerable<Dependency> Uses(this Type type)
@@ -51,7 +52,18 @@ namespace nsplit.CodeAnalyzis
             return
                 fieldUses
                     .Concat(methodUses)
-                    .Select(to => new Uses(type, to));
+                    .Select(to => new Uses(type, to))
+                    .Where(uses => uses.Target != type);
+
+        }
+
+        public static IEnumerable<Dependency> Contains(this Type type)
+        {
+            return
+                type
+                    .GetNestedTypes()
+                    .Select(nested => new Contains(type, nested))
+                    .Where(contains => contains.Target != type);
         }
 
         private static IEnumerable<MethodBase> MethodCalls(this MethodInfo methodInfo)

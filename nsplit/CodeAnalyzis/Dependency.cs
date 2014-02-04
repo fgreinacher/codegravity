@@ -12,15 +12,13 @@ namespace nsplit.CodeAnalyzis
 {
     public abstract class Dependency
     {
-        private readonly DependencyKind m_Kind;
         private readonly Type m_Source;
         private readonly Type m_Target;
 
-        protected Dependency(Type source, Type target, DependencyKind kind)
+        protected Dependency(Type source, Type target)
         {
             m_Source = Unnest(source);
             m_Target = Unnest(target);
-            m_Kind = kind;
         }
 
         public Type Target
@@ -33,20 +31,17 @@ namespace nsplit.CodeAnalyzis
             get { return m_Source; }
         }
 
-        public DependencyKind Kind
-        {
-            get { return m_Kind; }
-        }
+        public abstract DependencyKind Kind { get;}
 
         protected static Type Unnest(Type type)
         {
-            if (type.IsNested && type.DeclaringType != null) return Unnest(type.DeclaringType);
+            if (type.IsNestedPrivate && type.DeclaringType != null) return Unnest(type.DeclaringType);
             return type;
         }
 
         public override int GetHashCode()
         {
-            return m_Source.GetHashCode() ^ m_Target.GetHashCode() ^ m_Kind.GetHashCode();
+            return m_Source.GetHashCode() ^ m_Target.GetHashCode() ^ Kind.GetHashCode();
         }
 
         public override bool Equals(object other)
@@ -55,7 +50,7 @@ namespace nsplit.CodeAnalyzis
             return otherDependency != null &&
                    otherDependency.m_Source == m_Source &&
                    otherDependency.m_Target == m_Target &&
-                   otherDependency.m_Kind == m_Kind;
+                   otherDependency.Kind == Kind;
         }
 
         public override string ToString()

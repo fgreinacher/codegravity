@@ -3,6 +3,7 @@ using System.Linq;
 using Gma.CodeGravity.Tests.TestData;
 using nsplit.CodeAnalyzis;
 using NUnit.Framework;
+using Contains = nsplit.CodeAnalyzis.Contains;
 
 namespace Gma.CodeGravity.Tests
 {
@@ -79,6 +80,26 @@ namespace Gma.CodeGravity.Tests
             var uses = type.Uses();
 
             Assert.That(uses, Has.Member(new Uses(type, typeof(IEnumerable<>))));
+        }
+
+        [Test]
+        public void Contains_NestedPublic_IsDetected()
+        {
+            var type = typeof(TypeWithPublicNestedType);
+
+            var contains = type.Contains();
+
+            Assert.That(contains, Has.Member(new Contains(type, typeof(TypeWithPublicNestedType.NestedPublic))));
+        }
+
+        [Test]
+        public void Contains_NestedPrivate_IsNotDetected()
+        {
+            var type = typeof(TypeWithPrivateNestedType);
+
+            var contains = type.Contains();
+
+            Assert.That(contains, Is.Empty);
         }
     }
 }

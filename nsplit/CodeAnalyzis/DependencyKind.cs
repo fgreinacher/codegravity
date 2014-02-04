@@ -9,5 +9,6 @@ namespace nsplit.CodeAnalyzis
         MethodCall = 1,
         Uses = 2,
         Implements = 4,
+        Contains = 8
     }
 }
