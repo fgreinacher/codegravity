@@ -39,6 +39,12 @@ namespace nsplit.Api
                     });
         }
 
+        [ActionName("progress")]
+        public int GetProgress()
+        {
+            return Registry.GetProgress();
+        }
+
         private static IEnumerable<int> Path(int id)
         {
             return Registry

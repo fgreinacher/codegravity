@@ -11,7 +11,6 @@ using System.Net.Http;
 using System.Reflection;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
-using System.Xml;
 using nsplit.Helper;
 
 #endregion
@@ -20,17 +19,38 @@ namespace nsplit
 {
     internal class Program
     {
+        [STAThread]
         private static void Main(string[] args)
         {
-            const string folderPath = @"c:\temp\tia\bin\";
-            RegisterFolderResolver(folderPath);
-            //string assemblyToAnalyze = "Siemens.Automation.CommonServices";
-            //Assembly assembly = Assembly.LoadFile(Path.Combine(folderPath, assemblyToAnalyze + ".dll"));
+            Assembly assembly;
 
-            Assembly assembly = typeof (Program).Assembly;
+            Console.WriteLine("Press ENTER to continue, press ESC for DEMO mode, any other key to quit.");
+            var key = Console.ReadKey();
+            switch (key.Key)
+            {
+                case ConsoleKey.Escape:
+                    assembly = typeof (Program).Assembly;
+                    break;
+                case ConsoleKey.Enter:
+                    AssemblyLoadUi ui = new FormsUi();
+                    bool isOk = ui.TryLoadAssembly(args, out assembly);
+                    if (!isOk)
+                    {
+                        Console.WriteLine("Error occured. Press any key to quit.");
+                        Console.ReadKey();
+                    }
+                    break;
+                default:
+                    return;
+            }
+
 
             Registry.Build(assembly);
+            StartHttpServer();
+        }
 
+        private static void StartHttpServer()
+        {
             var config = new HttpSelfHostConfiguration("http://localhost:8080");
 
             string webFolder = Path.Combine(GetExePath(), "html");
@@ -69,26 +89,6 @@ namespace nsplit
                 Process.Start("http://localhost:8080/index.html");
                 Console.ReadKey();
             }
-        }
-
-        private static void RegisterFolderResolver(string folderPath)
-        {
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
-            {
-                var name = resolveArgs.Name;
-                var fileName = name.Substring(0, name.IndexOf(','));
-
-                string fullPath = Path.Combine(folderPath, fileName + ".dll");
-                if (!File.Exists(fullPath))
-                {
-                    fullPath = Path.Combine(folderPath, fileName + ".exe");
-                    if (!File.Exists(fullPath))
-                    {
-                        return null;
-                    }
-                }
-                return Assembly.LoadFile(fullPath);
-            };
         }
 
         private static string GetExePath()

@@ -1,27 +1,39 @@
 ﻿<html>
     <head>
         <title>Code Gravity</title>
-        <link href="css/main.css" rel="stylesheet" />
-        <link href="css/jstree.css" rel="stylesheet" />
+        <link href="css/index.css" rel="stylesheet" />
     </head>
     <body>
-        <div id="viewport"></div>
-        <div id="right">
-            <div id="toolbar">
-                <img src="/css/s.png"/>
-                <input id="searchbar"/>
-            </div>
-            <div id="typetree">
-            
-            </div>
+        <div id="middle">
+            <h2>Some hints while your assembly is beeng analyzed</h2>
+            <div id="progress">1%</div>
+            <p>You will be redirected automatically when dependency graph is complete.</p>
+            <p>You can still click <a href="main.html"><img src="css/go-icon.png"/></a> to continue anyway and see the incomplete dependency graph.</p>
+            <p>You can reload the graph (F5) anytime, newly discovered dependencies will occur on the graph.</p>
+            <p>Use mouse wheel to zoom and drag to pan.</p>
+            <p>You can also:</p>
+            <ul>
+                <li>mouse over nodes</li>
+                <li>click nodes</li>
+                <li>drag nodes</li>
+                <li>expand/collapse the tree</li>
+                <li>check/uncheck tree nodes</li>
+            </ul>
         </div>
-    </body>   
+    </body>
     
-    <script src="js/lib/d3.min.js"> </script>
     <script src="js/lib/jquery.js"> </script> 
-    <script src="js/lib/jstree.js"> </script>
-    <script src="js/lib/jquery.panzoom.min.js"></script>
-    <script src="js/main.js"> </script>
-    <script src="js/vertex.js"> </script>
-
+    <script>
+        $(document).ready(function () {
+            getPorgress();
+        });
+        
+        function getPorgress() {
+            $.getJSON("api/dependencies/progress", function (data) {
+                $("#progress").text(data + "%");
+                if (data == 100) window.location.href = "main.html";
+                else setTimeout(getPorgress, 200);
+            });
+        }
+    </script>   
 </html>

@@ -41,6 +41,11 @@ namespace nsplit
             //_instance.OnEdgeAdded += (sender, e) => _edges.Enqueue(e.Edge);
         }
 
+        public static int GetProgress()
+        {
+            return _currentProgress;
+        }
+
         //public static IEnumerable<Edge> GetUpdate()
         //{
         //    for (int i = 0; i < 100; i++)

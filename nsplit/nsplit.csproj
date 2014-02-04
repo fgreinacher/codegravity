@@ -56,10 +56,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Depender.Parser\packages\Microsoft.AspNet.WebApi.SelfHost.5.1.0\lib\net45\System.Web.Http.SelfHost.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Api\Dto\LinkDto.cs" />
+    <Compile Include="AssemblyLoadUi.cs" />
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
     <Compile Include="CodeAnalyzis\BuildProgressEventArgs.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\AdjacencyMatrix.cs" />
@@ -83,6 +85,8 @@
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeBase.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeFactory.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\QualifiedName.cs" />
+    <Compile Include="ConsoleUi.cs" />
+    <Compile Include="FormsUi.cs" />
     <Compile Include="Helper\FileType.cs" />
     <Compile Include="Registry.cs" />
     <None Include="app.manifest" />
@@ -148,6 +152,15 @@
       <Link>AutoMapper.Net4.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="html\css\index.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="html\css\go-icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="html\main.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="html\js\lib\jquery.panzoom.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
