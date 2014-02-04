@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 
 #endregion
 
-namespace nsplit.Api
+namespace nsplit.Api.Dto
 {
     [DataContract]
     public class LinkDto

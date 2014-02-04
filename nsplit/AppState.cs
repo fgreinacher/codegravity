@@ -5,6 +5,7 @@
 #region usings
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
 using nsplit.CodeAnalyzis;
@@ -15,11 +16,10 @@ using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 
 namespace nsplit
 {
-    internal static class Registry
+    internal static class AppState
     {
         private static DependencyGraph _instance;
         private static int _currentProgress;
-        //private static ConcurrentQueue<Edge> _edges; 
 
         public static void Build(Assembly assembly)
         {

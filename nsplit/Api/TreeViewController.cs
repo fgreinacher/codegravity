@@ -20,21 +20,21 @@ namespace nsplit.Api
         [ActionName("deep")]
         public DeepNodeDto GetDeep()
         {
-            var root = Registry.GetNode(0);
+            var root = AppState.GetNode(0);
             return Mapper.DynamicMap<DeepNodeDto>(root);
         }
 
         [ActionName("node")]
         public NodeDto GetNode(string id)
         {
-            var node = Registry.GetNode(id);
+            var node = AppState.GetNode(id);
             return Mapper.DynamicMap<NodeDto>(node);
         }
 
         [ActionName("children")]
         public IEnumerable<NodeDto> GetChildren(string id)
         {
-            INode parent = Registry.GetNode(id);
+            INode parent = AppState.GetNode(id);
 
             return
                 parent

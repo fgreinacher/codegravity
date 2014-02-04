@@ -20,7 +20,7 @@ namespace nsplit.Api
         public IEnumerable<LinkDto> GetAll()
         {
             return
-                Registry
+                AppState
                     .GetAll()
                     .Select(Mapper.DynamicMap<LinkDto>);
         }
@@ -29,7 +29,7 @@ namespace nsplit.Api
         public IEnumerable<EdgeDto> GetEdges(string id)
         {
             return
-                Registry
+                AppState
                     .InOut(id)
                     .Select(edge => new EdgeDto
                     {
@@ -42,12 +42,12 @@ namespace nsplit.Api
         [ActionName("progress")]
         public int GetProgress()
         {
-            return Registry.GetProgress();
+            return AppState.GetProgress();
         }
 
         private static IEnumerable<int> Path(int id)
         {
-            return Registry
+            return AppState
                 .GetNode(id)
                 .Path()
                 .Select(n => n.Id);

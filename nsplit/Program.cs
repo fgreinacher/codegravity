@@ -45,7 +45,7 @@ namespace nsplit
             }
 
 
-            Registry.Build(assembly);
+            AppState.Build(assembly);
             StartHttpServer();
         }
 

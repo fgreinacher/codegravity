@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\Dto\DeepNodeDto.cs" />
     <Compile Include="Api\Dto\LinkDto.cs" />
     <Compile Include="AssemblyLoadUi.cs" />
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
@@ -92,7 +93,7 @@
     <Compile Include="ConsoleUi.cs" />
     <Compile Include="FormsUi.cs" />
     <Compile Include="Helper\FileType.cs" />
-    <Compile Include="Registry.cs" />
+    <Compile Include="AppState.cs" />
     <None Include="app.manifest" />
     <None Include="html\css\main.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -152,10 +153,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.Net4.dll">
-      <Link>AutoMapper.Net4.dll</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="html\css\index.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
