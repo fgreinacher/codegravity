@@ -7,6 +7,7 @@ var root;
 var rawLinks = [];
 var verticesById = [];
 
+var toolTip = d3.select(document.getElementById("toolTip"));
 var vis = d3.select("#viewport").append("svg:svg");
 window.onresize = resize;
 
@@ -190,21 +191,31 @@ function vertexMouseOver(d) {
 function vertexMouseOut(d) {
     var tree = $('#typetree').jstree(true);
     tree.deselect_node(d, true, false);
-    hideTexts();
+    hideText();
     panzoom.panzoom("option", "disablePan", false);
 }
 
 function showText(d) {
-    vis
-        .insert("text")
-        .attr("class", "hint")
-        .attr("x", d.x + d.getRadius() + 1)
-        .attr("y", d.y)
+    toolTip
+        .transition()
+        .duration(200)
+        .style("opacity", ".9")
+        .style("left", (d3.event.pageX + 35) + "px")
+        .style("top", (d3.event.pageY - 35) + "px");
+    
+    toolTip.select("#toolTipHead")
+        .text(d.text);
+
+    toolTip.select("#toolTipBody")
         .text(d.fullName());
 }
 
-function hideTexts() {
-    vis.selectAll("text.hint").remove();
+function hideText() {
+    toolTip
+        .transition()
+        .duration(500)
+        .style("opacity", "0")
+        .transition();
 }
 
 function click(d) {
