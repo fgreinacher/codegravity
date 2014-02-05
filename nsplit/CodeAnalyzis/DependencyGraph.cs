@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
@@ -32,9 +33,9 @@ namespace nsplit.CodeAnalyzis
         }
 
         public event EventHandler<EdgeAddedEventArgs> OnEdgeAdded;
-        public event EventHandler<BuildProgressEventArgs> OnProgress;
+        public event EventHandler<AnalyzesProgressEventArgs> OnProgress;
 
-        public static DependencyGraph StartBuildAsync(Assembly assembly)
+        public static DependencyGraph StartAnalyzesAsync(Assembly assembly, CancellationToken token)
         {
             var types = assembly.Types().ToArray();
             var rootName = assembly.GetName().Name;
@@ -43,8 +44,9 @@ namespace nsplit.CodeAnalyzis
             var matrix = new AdjacencyMatrix(nodesById.Length);
             var graph = new DependencyGraph(tree, types, matrix, nodesById);
 
-            var buildTask = new Task(graph.DoBuild);
-            buildTask.Start();
+            Task.Factory
+                .StartNew(graph.Analyze, token)
+                .ContinueWith(task => graph.InvokeOnProgress(AnalyzesProgressEventArgs.Finished()), token);
 
             return graph;
         }
@@ -63,12 +65,12 @@ namespace nsplit.CodeAnalyzis
             return tree;
         }
 
-        private void DoBuild()
+        private void Analyze()
         {
-            DoBuildTask(m_Types, AnalyzerExtensions.Uses, "Analyzing uses");
-            DoBuildTask(m_Types, AnalyzerExtensions.Implements, "Analyzing implements");
-            DoBuildTask(m_Types, AnalyzerExtensions.Contains, "Analyzing contain");
-            DoBuildTask(m_Types, AnalyzerExtensions.Calls, "Analyzing calls");
+            DoAnalyzeTask(m_Types, AnalyzerExtensions.Uses, "Analyzing uses");
+            DoAnalyzeTask(m_Types, AnalyzerExtensions.Implements, "Analyzing implements");
+            DoAnalyzeTask(m_Types, AnalyzerExtensions.Contains, "Analyzing contain");
+            DoAnalyzeTask(m_Types, AnalyzerExtensions.Calls, "Analyzing calls");
         }
 
         public INode GetNode(int idNo)
@@ -87,7 +89,7 @@ namespace nsplit.CodeAnalyzis
         }
 
 
-        private void DoBuildTask(Type[] types, Func<Type, IEnumerable<Dependency>> getter, string taskName)
+        private void DoAnalyzeTask(Type[] types, Func<Type, IEnumerable<Dependency>> getter, string taskName)
         {
             for (int i = 0; i < types.Length; i++)
             {
@@ -99,16 +101,15 @@ namespace nsplit.CodeAnalyzis
                     if (!added) continue;
                     InvokeOnEdgeAdded(edge);
                 }
-                InvokeOnProgress(taskName, i, types.Length);
+                InvokeOnProgress(new AnalyzesProgressEventArgs(taskName, i, types.Length, false));
             }
-            InvokeOnProgress(taskName, types.Length, types.Length);
+            InvokeOnProgress(new AnalyzesProgressEventArgs(taskName, types.Length, types.Length, false));
         }
 
-        private void InvokeOnProgress(string taskName, int actual, int max)
+        private void InvokeOnProgress(AnalyzesProgressEventArgs eventArgs)
         {
             var handler = OnProgress;
             if (handler == null) return;
-            var eventArgs = new BuildProgressEventArgs(taskName, actual, max);
             handler.Invoke(this, eventArgs);
         }
 

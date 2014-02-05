@@ -22,30 +22,6 @@ namespace nsplit
         [STAThread]
         private static void Main(string[] args)
         {
-            Assembly assembly;
-
-            Console.WriteLine("Press ENTER to continue, press ESC for DEMO mode, any other key to quit.");
-            var key = Console.ReadKey();
-            switch (key.Key)
-            {
-                case ConsoleKey.Escape:
-                    assembly = typeof (Program).Assembly;
-                    break;
-                case ConsoleKey.Enter:
-                    AssemblyLoadUi ui = new FormsUi();
-                    bool isOk = ui.TryLoadAssembly(args, out assembly);
-                    if (!isOk)
-                    {
-                        Console.WriteLine("Error occured. Press any key to quit.");
-                        Console.ReadKey();
-                    }
-                    break;
-                default:
-                    return;
-            }
-
-
-            AppState.Build(assembly);
             StartHttpServer();
         }
 

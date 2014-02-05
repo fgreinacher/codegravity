@@ -39,12 +39,6 @@ namespace nsplit.Api
                     });
         }
 
-        [ActionName("progress")]
-        public int GetProgress()
-        {
-            return AppState.GetProgress();
-        }
-
         private static IEnumerable<int> Path(int id)
         {
             return AppState

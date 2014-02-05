@@ -9,7 +9,7 @@
 #right {
     float: left;
     height: 100vh;
-    width: 25vw;
+    width: 30vw;
     overflow: hidden; 
 }
 
@@ -20,14 +20,14 @@
 #typetree {
     float:left;
     height: 100%;
-    overflow-y: scroll;
+    overflow: scroll;
     width: 100%;
 }
 
 #viewport {
     float: left;
     height: 100vh;
-    width: 75vw;
+    width: 70vw;
 }
 
 .node {

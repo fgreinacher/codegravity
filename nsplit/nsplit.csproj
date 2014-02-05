@@ -63,11 +63,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Api\AnalyzesController.cs" />
     <Compile Include="Api\Dto\DeepNodeDto.cs" />
     <Compile Include="Api\Dto\LinkDto.cs" />
-    <Compile Include="AssemblyLoadUi.cs" />
+    <Compile Include="Api\Dto\ProgressResultDto.cs" />
+    <Compile Include="Api\Dto\StartResultDto.cs" />
+    <Compile Include="Ui\AssemblyLoadUi.cs" />
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
-    <Compile Include="CodeAnalyzis\BuildProgressEventArgs.cs" />
+    <Compile Include="CodeAnalyzis\AnalyzesProgressEventArgs.cs" />
     <Compile Include="CodeAnalyzis\Contains.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\AdjacencyMatrix.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependecyKindExtensions.cs" />
@@ -90,10 +93,11 @@
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeBase.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeFactory.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\QualifiedName.cs" />
-    <Compile Include="ConsoleUi.cs" />
-    <Compile Include="FormsUi.cs" />
+    <Compile Include="Ui\ConsoleUi.cs" />
+    <Compile Include="Ui\FormsUi.cs" />
     <Compile Include="Helper\FileType.cs" />
     <Compile Include="AppState.cs" />
+    <Compile Include="Ui\WebUi.cs" />
     <None Include="app.manifest" />
     <None Include="html\css\main.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -154,9 +158,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="html\css\index.css">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="html\css\go-icon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="html\main.html">

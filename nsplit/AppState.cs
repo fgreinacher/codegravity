@@ -5,9 +5,9 @@
 #region usings
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Threading;
 using nsplit.CodeAnalyzis;
 using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
@@ -19,43 +19,30 @@ namespace nsplit
     internal static class AppState
     {
         private static DependencyGraph _instance;
-        private static int _currentProgress;
+        private static AnalyzesProgressEventArgs _currentProgress;
+        private static CancellationTokenSource _tokenSource;
 
-        public static void Build(Assembly assembly)
+        public static void StartAnalyzes(Assembly assembly)
         {
-            _instance = DependencyGraph.StartBuildAsync(assembly);
-            _currentProgress = 0;
+            if (_tokenSource != null)
+            {
+                Console.WriteLine("Canceled.");
+                _tokenSource.Cancel();
+            }
+            _tokenSource = new CancellationTokenSource();
+
+            _instance = DependencyGraph.StartAnalyzesAsync(assembly, _tokenSource.Token);
+            _currentProgress = AnalyzesProgressEventArgs.Started();
             _instance.OnProgress += (sender, e) =>
             {
-                int progress = (e.Actual*100/e.Max);
-                if (_currentProgress == progress) return;
-                Console.Write("\r{0,10} :\t{1}%", e.TaskName, progress);
-                _currentProgress = progress;
-                if (progress == 100)
-                {
-                    Console.WriteLine();
-                }
+                _currentProgress = e;
             };
-
-            //_edges = new ConcurrentQueue<Edge>();
-            //_instance.OnEdgeAdded += (sender, e) => _edges.Enqueue(e.Edge);
         }
 
-        public static int GetProgress()
+        public static AnalyzesProgressEventArgs GetProgress()
         {
             return _currentProgress;
         }
-
-        //public static IEnumerable<Edge> GetUpdate()
-        //{
-        //    for (int i = 0; i < 100; i++)
-        //    {
-        //        Edge edge;
-        //        bool isOk = _edges.TryDequeue(out edge);
-        //        if (isOk) yield return edge;
-        //        else yield break;
-        //    }
-        //}
 
         public static IEnumerable<Edge> GetAll()
         {

@@ -10,12 +10,13 @@ using System.Reflection;
 
 #endregion
 
-namespace nsplit
+namespace nsplit.Ui
 {
     internal class ConsoleUi : AssemblyLoadUi
     {
-        public override bool TryLoadAssembly(string[] args, out Assembly assembly)
+        public override bool TryLoadAssembly(string[] args, out Assembly assembly, out string message)
         {
+            message = string.Empty;
             string filePath = string.Empty;
             assembly = null;
             string path;

@@ -4,23 +4,23 @@
 
 #region usings
 
-using System;
 using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
 #endregion
 
-namespace nsplit
+namespace nsplit.Ui
 {
     internal class FormsUi : AssemblyLoadUi
     {
-        public override bool TryLoadAssembly(string[] args, out Assembly assembly)
+        public override bool TryLoadAssembly(string[] args, out Assembly assembly, out string message)
         {
+            message = string.Empty;
             var path = args.Length > 0 ? args[0] : string.Empty;
             if (File.Exists(path))
             {
-                return TryLoadAssembly(path, out assembly);
+                return TryLoadAssembly(path, out assembly, out message);
             }
             var dialog = new OpenFileDialog
             {
@@ -33,7 +33,7 @@ namespace nsplit
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                return TryLoadAssembly(dialog.FileName, out assembly);
+                return TryLoadAssembly(dialog.FileName, out assembly, out message);
             }
             assembly = null;
             return false;

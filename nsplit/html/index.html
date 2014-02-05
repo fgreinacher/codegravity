@@ -5,12 +5,27 @@
     </head>
     <body>
         <div id="middle">
-            <h2>Your assembly is beeng analyzed</h2>
-            <div id="progress">1%</div>
+            <h3>Code Gravity</h3>
+            <p>
+                Analyze your assembly: 
+                <input id="assembly" type="text" placeholder="Enter assembly full local path eg. 'c:\temp\Some.Assembly.dll'" />
+                <button id="analyze">Analyze</button>
+            </p>
+            <p>
+                Analyze the default assembly:
+                <button id="demo">Demo</button>
+            </p>
+            <div id="progressArea">
+                <p>
+                    Assembly: <span id="loaded"></span><br/>
+                    Analyzes: <span id="message"></span><br/>
+                    Progress: <span id="progress"></span>
+                </p>
+            </div>
             <p>You will be redirected automatically when dependency graph is complete.</p>
-            <p>You can still click <a href="main.html"><img src="css/go-icon.png"/></a> to continue anyway and see the incomplete dependency graph.</p>
-            <p>You can reload the graph (F5) anytime, newly discovered dependencies will show up.</p>
-            <p>Use mouse wheel to zoom, drag to pan.</p>
+            <p>You can still <button id="goto" disabled="disabled">go to graph</button> anyway and see the incomplete dependency graph.</p>
+            <p>The graph can be realoaded anytime by clicking (F5) and newly discovered dependencies will show up.</p>
+            <p>Use mouse wheel to zoom, drag surface to pan.</p>
             <p>You can also:</p>
             <ul>
                 <li>mouse over nodes</li>
@@ -24,16 +39,42 @@
     
     <script src="js/lib/jquery.js"> </script> 
     <script>
-        $(document).ready(function () {
-            getPorgress();
+        $(document).ready(function() {
+            $("#analyze").on("click", function() {
+                var fileName = $("#assembly").val();
+                startAnalyzes(fileName);
+            });
+
+            $("#demo").on("click", function() {
+                startAnalyzes("");
+            });
         });
-        
+
+        function startAnalyzes(file) {
+            $.getJSON("api/analyzes/start?file=" + file, function(data) {
+                $("#loaded").text(data.message);
+                $("#message").text("Started");
+                if (data.ok) {
+                    setTimeout(getPorgress, 100);
+                    $("#goto")
+                        .removeAttr("disabled")
+                        .on("clilc", goToGraph);
+                }
+            });
+        }
+
         function getPorgress() {
-            $.getJSON("api/dependencies/progress", function (data) {
-                $("#progress").text(data + "%");
-                if (data == 100) window.location.href = "main.html";
+            $.getJSON("api/analyzes/progress", function(progress) {
+                $("#progress").text(Math.round(progress.actual * 100 / progress.max) + "%");
+                $("#message").text(progress.message);
+                if (progress.finished) goToGraph();
                 else setTimeout(getPorgress, 200);
             });
         }
+
+        function goToGraph() {
+            window.location.href = "main.html";
+        }
+
     </script>   
 </html>

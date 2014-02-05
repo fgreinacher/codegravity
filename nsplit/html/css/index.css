@@ -1,8 +1,15 @@
 ﻿body {
     font-family: Arial;
-    font-size: x-large;
     margin: 50px;
-    color:midnightblue
+}
+
+input {
+    border: 1px solid #000000;
+    padding: 2px; 
+}
+
+button {
+    text-transform: uppercase;
 }
 
 #middle {
@@ -14,7 +21,28 @@
 
 #progress {
     width: 100%;
-    text-align: center;
-    font-size: xx-large;
-    color:darkgreen
+}
+
+#message {
+    width: 100%;
+    font-size: large;
+}
+
+#assembly {
+    width: 450px;
+}
+
+
+#loaded {
+    width: 100%;
+    font-size: large;
+}
+
+#progressArea {
+    font-family: monospace;
+    font-size:larger;
+    border: 1px;
+    border-style: groove;
+    border-color: lightslategray;
+    padding:  10px;
 }

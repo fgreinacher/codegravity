@@ -10,13 +10,13 @@ using System.Reflection;
 
 #endregion
 
-namespace nsplit
+namespace nsplit.Ui
 {
     internal abstract class AssemblyLoadUi
     {
-        public abstract bool TryLoadAssembly(string[] args, out Assembly assembly);
+        public abstract bool TryLoadAssembly(string[] args, out Assembly assembly, out string message);
 
-        protected bool TryLoadAssembly(string path, out Assembly assembly)
+        protected bool TryLoadAssembly(string path, out Assembly assembly, out string message)
         {
             string folderPath = Path.GetDirectoryName(path);
             RegisterFolderResolver(folderPath);
@@ -27,14 +27,17 @@ namespace nsplit
             catch (BadImageFormatException ex1)
             {
                 assembly = null;
-                Console.WriteLine(ex1.Message);
+                message = ex1.Message;
+                return false;
             }
             catch (IOException ex2)
             {
                 assembly = null;
-                Console.WriteLine(ex2.Message);
+                message = ex2.Message;
+                return false;
             }
-            return assembly != null;
+            message = assembly.GetName().Name;
+            return true;
         }
 
         protected void RegisterFolderResolver(string folderPath)
