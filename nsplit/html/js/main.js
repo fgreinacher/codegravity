@@ -147,7 +147,7 @@ function update() {
         .attr("cy", function(d) { return d.y; })
         .attr("r", function(d) { return d.getRadius(); })
         .style("fill", function(d) { return d.getColor(); })
-        .style("stroke", function(d) { return root.selected[d.id] ? "#ff00ff" : "#fff"; })
+        .style("stroke", function(d) { return root.selected[d.id] ? "#111" : "#fff"; })
         .on("click", click)
         .on("mouseover", vertexMouseOver)
         .on("mouseout", vertexMouseOut)
@@ -165,7 +165,7 @@ function tick() {
 
     node.attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
-        .style("stroke", function(d) { return root.selected[d.id] ? "#ff00ff" : "#fff"; });
+        .style("stroke", function(d) { return root.selected[d.id] ? "#111" : "#fff"; });
 }
 
 function vertexMouseOver(d) {

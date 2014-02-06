@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using nsplit.CodeAnalyzis;
@@ -49,22 +50,26 @@ namespace nsplit
 
         public static IEnumerable<Edge> GetAll()
         {
+            if (_instance==null) return Enumerable.Empty<Edge>();
             return _instance.All();
         }
 
         public static INode GetNode(string id)
         {
+            if (_instance == null) return null;
             int idNo = (id == "#") ? 0 : Int32.Parse(id);
             return _instance.GetNode(idNo);
         }
 
         public static INode GetNode(int idNo)
         {
+            if (_instance == null) return null;
             return _instance.GetNode(idNo);
         }
 
         public static IEnumerable<Edge> InOut(string id)
         {
+            if (_instance == null) return Enumerable.Empty<Edge>();
             return _instance.InOut(id);
         }
     }
