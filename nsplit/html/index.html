@@ -22,7 +22,7 @@
                     Progress: <span id="progress"></span>
                 </p>
             </div>
-            <p>You will be redirected automatically when dependency graph is complete.</p>
+            <p>The page will be redirected automatically when dependency graph is complete.</p>
             <p>You can still <button id="goto" disabled="disabled">go to graph</button> anyway and see the incomplete dependency graph.</p>
             <p>The graph can be realoaded anytime by clicking (F5) and newly discovered dependencies will show up.</p>
             <p>Use mouse wheel to zoom, drag surface to pan.</p>
@@ -38,43 +38,5 @@
     </body>
     
     <script src="js/lib/jquery.js"> </script> 
-    <script>
-        $(document).ready(function() {
-            $("#analyze").on("click", function() {
-                var fileName = $("#assembly").val();
-                startAnalyzes(fileName);
-            });
-
-            $("#demo").on("click", function() {
-                startAnalyzes("");
-            });
-        });
-
-        function startAnalyzes(file) {
-            $.getJSON("api/analyzes/start?file=" + file, function(data) {
-                $("#loaded").text(data.message);
-                $("#message").text("Started");
-                if (data.ok) {
-                    setTimeout(getPorgress, 100);
-                    $("#goto")
-                        .removeAttr("disabled")
-                        .on("click", goToGraph);
-                }
-            });
-        }
-
-        function getPorgress() {
-            $.getJSON("api/analyzes/progress", function(progress) {
-                $("#progress").text(Math.round(progress.actual * 100 / progress.max) + "%");
-                $("#message").text(progress.message);
-                if (progress.finished) goToGraph();
-                else setTimeout(getPorgress, 200);
-            });
-        }
-
-        function goToGraph() {
-            window.location.href = "main.html";
-        }
-
-    </script>   
+    <script src="js/index.js"> </script>
 </html>
