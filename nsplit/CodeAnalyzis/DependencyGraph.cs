@@ -12,6 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
+using nsplit.CodeAnalyzis.Do;
 
 #endregion
 

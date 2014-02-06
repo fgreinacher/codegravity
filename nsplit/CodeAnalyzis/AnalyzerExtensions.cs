@@ -10,6 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using ClrTest.Reflection;
+using nsplit.CodeAnalyzis.Do;
 
 #endregion
 
@@ -24,6 +25,14 @@ namespace nsplit.CodeAnalyzis
                     .GetTypes()
                     .Where(t => !t.IsCompilerGenerated())
                     .Where(t => !t.IsNestedPrivate);
+        }
+
+        public static IEnumerable<Dependency> Implements(this Type type)
+        {
+            return
+                Once(type.BaseType)
+                    .Concat(type.GetInterfaces())
+                    .Select(baseType => new Implements(type, baseType));
         }
 
         public static IEnumerable<Dependency> Calls(this Type type)
@@ -72,14 +81,6 @@ namespace nsplit.CodeAnalyzis
                 MethodBodyInfo
                     .Create(methodInfo)
                     .Calls();
-        }
-
-        public static IEnumerable<Dependency> Implements(this Type type)
-        {
-            return
-                Once(type.BaseType)
-                    .Concat(type.GetInterfaces())
-                    .Select(baseType => new Implements(type, baseType));
         }
 
         private static IEnumerable<T> Once<T>(T element) where T : class

@@ -71,19 +71,19 @@
     <Compile Include="Ui\AssemblyLoadUi.cs" />
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
     <Compile Include="CodeAnalyzis\AnalyzesProgressEventArgs.cs" />
-    <Compile Include="CodeAnalyzis\Contains.cs" />
+    <Compile Include="CodeAnalyzis\Do\Contains.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\AdjacencyMatrix.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependecyKindExtensions.cs" />
     <Compile Include="CodeAnalyzis\DependencyGraph.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependencyKinds.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Edge.cs" />
     <Compile Include="Api\DependenciesController.cs" />
-    <Compile Include="CodeAnalyzis\Dependency.cs" />
-    <Compile Include="CodeAnalyzis\DependencyKind.cs" />
+    <Compile Include="CodeAnalyzis\Do\Dependency.cs" />
+    <Compile Include="CodeAnalyzis\Do\DependencyKind.cs" />
     <Compile Include="Api\Dto\EdgeDto.cs" />
     <Compile Include="CodeAnalyzis\EdgeAddedEventArgs.cs" />
-    <Compile Include="CodeAnalyzis\Implements.cs" />
-    <Compile Include="CodeAnalyzis\MethodCall.cs" />
+    <Compile Include="CodeAnalyzis\Do\Implements.cs" />
+    <Compile Include="CodeAnalyzis\Do\MethodCall.cs" />
     <Compile Include="Api\Dto\NodeDto.cs" />
     <Compile Include="Api\TreeViewController.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\INode.cs" />
@@ -105,7 +105,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper\WebServerOnFolder.cs" />
-    <Compile Include="CodeAnalyzis\Uses.cs" />
+    <Compile Include="CodeAnalyzis\Do\Uses.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

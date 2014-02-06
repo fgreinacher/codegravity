@@ -8,7 +8,7 @@ using System;
 
 #endregion
 
-namespace nsplit.CodeAnalyzis
+namespace nsplit.CodeAnalyzis.Do
 {
     public class Implements : Dependency
     {
