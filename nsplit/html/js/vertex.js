@@ -83,13 +83,17 @@ Vertex.prototype.explode = function() {
     if (this.children == null) return;
     var vertex=this;
     var radius = this.getRadius();
+    var initialX = vertex.x;
+    var initialY = vertex.y;
+    force.stop();
     this.children.forEach(function(child) {
         {
-            child.x = vertex.x + radius * (Math.random() - .5);
-            child.y = vertex.y + radius * (Math.random() - .5);
+            child.x = initialX + 2 * radius * (Math.random() - .5);
+            child.y = initialY + 2 * radius * (Math.random() - .5);
         }
     });
     this.isExpanded = true;
+    force.resume();
 };
 
 Vertex.prototype.implode = function() {

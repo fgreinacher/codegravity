@@ -28,7 +28,7 @@ namespace nsplit.Api.Dto
         [DataMember(Name = "icon")]
         public string Icon
         {
-            get { return IsLeaf ? "/css/c.png" : "/css/n.png"; }
+            get { return IsLeaf ? "/img/c.png" : "/img/n.png"; }
         }
     }
 }

@@ -45,7 +45,8 @@ namespace nsplit
                 FileType.Javascript,
                 FileType.Gif,
                 FileType.Png,
-                FileType.Json);
+                FileType.Json,
+                FileType.Ico);
 
             config.MessageHandlers.Add(webServerOnFolder);
             config.Routes.MapHttpRoute(

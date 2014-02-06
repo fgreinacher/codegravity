@@ -10,7 +10,7 @@
     float: right;
     height: 100vh;
     width: 30vw;
-    overflow: auto; 
+    overflow: auto;
 }
 
 #viewport {
@@ -60,4 +60,10 @@
 
 .tooltipbody {
      font-size: small;
+}
+
+#imgAssembly {
+    margin-left: 4px;
+    margin-top: 4px;
+    margin-bottom: -2px;   
 }
