@@ -4,7 +4,7 @@
 
 #region usings
 
-using System.IO;
+using System.Net.Http.Formatting;
 using System.Reflection;
 using System.Web.Http;
 using AutoMapper;
@@ -21,7 +21,7 @@ namespace nsplit.Api
         {
             string message;
             Assembly assembly;
-            bool isOk = 
+            bool isOk =
                 string.IsNullOrEmpty(file)
                     ? LoadDemoAssembly(out assembly, out message)
                     : new WebUi().TryLoadAssembly(new[] {file}, out assembly, out message);

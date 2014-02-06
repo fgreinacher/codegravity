@@ -34,7 +34,28 @@ d3.json("api/treeview/deep", function(jsonRoot) {
             "checkbox": {
                 "keep_selected_style": false
             },
-            "plugins": ["checkbox"]
+            "contextmenu": {
+                "items": function(n) {
+                    return {
+                        "ExpandSubTree": {
+                            "label": "EXPAND ALL",
+                            "action": function (obj) {
+                                var tree = $('#typetree').jstree(true);
+                                tree.open_all(n);
+                                tree.deselect_all();
+                                var v = verticesById[n.original.id];
+                                expandGraph(v);
+                                function expandGraph(vertex) {
+                                    if (!vertex.children) return;
+                                    vertex.children.forEach(function(el) { expandGraph(el); });
+                                    if (!vertex.isExpanded) click(vertex);
+                                }
+                            }
+                        }
+                    };
+                }
+            },
+            "plugins": ["checkbox", "contextmenu"]
         })
         .on('open_node.jstree', function(e, data) {
             var vertex = verticesById[data.node.original.id];
