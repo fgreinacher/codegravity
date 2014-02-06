@@ -24,10 +24,21 @@ function getPorgress() {
 }
 
 function goToGraph() {
-    window.location.href = "main.html";
+    var newUrl = window.location.protocol + "//" + window.location.host + "/main.html";
+    //window.location = newUrl;
+    window.location.replace(newUrl);
+}
+
+function supportsCanvas() {
+    return document.createElement('svg');
 }
 
 $(document).ready(function () {
+
+    if (!supportsCanvas()) {
+        $("#warning").style("visibility", "visible");
+    }
+
     $("#analyze").on("click", function () {
         var fileName = $("#assembly").val();
         startAnalyzes(fileName);

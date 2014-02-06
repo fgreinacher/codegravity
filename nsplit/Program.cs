@@ -58,9 +58,11 @@ namespace nsplit
                 try
                 {
                     server.OpenAsync().Wait();
+                    Console.WriteLine("Server started on [{0}]", HttpLocalhost);
                 }
                 catch (AggregateException ex)
                 {
+                    Console.WriteLine("Failed to start server on [{0}]", HttpLocalhost);
                     Console.WriteLine(ex.ToString());
                     Process.Start("readme.html");
                     return;

@@ -189,6 +189,16 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>@echo on
+if not exist $(SolutionDir)\xcopy md $(SolutionDir)\xcopy
+copy /Y $(TargetDir)\*.dll $(SolutionDir)\xcopy\
+copy /Y $(TargetDir)\*.exe $(SolutionDir)\xcopy\
+copy /Y $(TargetDir)\*.html $(SolutionDir)\xcopy\
+if not exist $(SolutionDir)\xcopy\html md $(SolutionDir)\xcopy\html
+xcopy /E /Y $(TargetDir)\html $(SolutionDir)\xcopy\html
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

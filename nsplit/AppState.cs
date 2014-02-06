@@ -26,16 +26,19 @@ namespace nsplit
         {
             if (_tokenSource != null)
             {
-                Console.WriteLine("Canceled.");
+                Console.WriteLine("Analyzes canceled.");
                 _tokenSource.Cancel();
             }
             _tokenSource = new CancellationTokenSource();
 
+            Console.WriteLine("Analyzes started.\n\rAssembly: [{0}]", assembly.GetName());
             _instance = DependencyGraph.StartAnalyzesAsync(assembly, _tokenSource.Token);
             _currentProgress = AnalyzesProgressEventArgs.Started();
             _instance.OnProgress += (sender, e) =>
             {
+                if (e.IsFinished) {Console.WriteLine("Analyzes finished.");}
                 _currentProgress = e;
+                _tokenSource = null;
             };
         }
 

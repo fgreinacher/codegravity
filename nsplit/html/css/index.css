@@ -12,6 +12,12 @@ button {
     text-transform: uppercase;
 }
 
+#warning {
+    font-size: large;
+    color:darkred;
+    visibility: hidden;
+}
+
 #middle {
     display: block;
     margin-left: auto;
