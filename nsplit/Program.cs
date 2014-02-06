@@ -19,6 +19,9 @@ namespace nsplit
 {
     internal class Program
     {
+
+        public const string HttpLocalhost = "http://localhost:8080";
+
         [STAThread]
         private static void Main(string[] args)
         {
@@ -27,7 +30,7 @@ namespace nsplit
 
         private static void StartHttpServer()
         {
-            var config = new HttpSelfHostConfiguration("http://localhost:8080");
+            var config = new HttpSelfHostConfiguration(HttpLocalhost);
 
             string webFolder = Path.Combine(GetExePath(), "html");
 
@@ -62,10 +65,12 @@ namespace nsplit
                     Process.Start("readme.html");
                     return;
                 }
-                Process.Start("http://localhost:8080/index.html");
+                Process.Start(HttpLocalhost + "/index.html");
                 Console.ReadKey();
             }
         }
+
+
 
         private static string GetExePath()
         {

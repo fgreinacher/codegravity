@@ -6,28 +6,56 @@
         <title>Upsss!</title>
     </head>
     <body>
-        <h2>Upsss! It looks like I am not allowed to start an HTTP server here.</h2>
-        <p>
-            This application listens to http://localhost:8080/. By default, listening at a particular HTTP address requires administrator privileges. 
-        </p>
-        <p>
-            When you run me, therefore, you may get this error: &quot;HTTP could not register URL <a href="http://+:8080/">http://+:8080/</a>&quot;
-        </p>
-        <p>
-            There are two ways to avoid this error:
-        </p>
-        <ul>
-            <li>Run Visual Studio with elevated administrator permissions (right click and <i><b>&quot;Run as Administrator&quot;</b></i>), or</li>
-            <li>Use Netsh.exe to give your account permissions to reserve the URL.</li>
-        </ul>
-        <p>
-            To use Netsh.exe, open a command prompt with administrator privileges and enter the following command:following command:
-        </p>
-        <pre><span>netsh http add urlacl url = http:/+:8080/ user=machine\username</span></pre>
-        <p >
-            When you are finished self-hosting, be sure to delete the reservation:
-        </p>
-        <pre>//+:8080/</pre>
+        <style>
+            body {
+                font-family: Arial;
+                margin: 50px;
+            }
 
+            #middle {
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                width: 800px;
+            }
+        </style>
+        <div id="middle">
+            <h2>Upsss! Unable to start an HTTP server here.</h2>
+            <h4>The port 8080 is already ocupied</h4>
+            <p>Another instance of this application or some othe service is listening to port 8080. You can close this application or mofify code (a constant in <code>Program.cs</code> file) and recompile this application to use another port. </p>
+            <h4>Not enaugh persmissions to listen port 8080</h4>
+            <p>
+                This application listens to <code>http://localhost:8080/</code>. By default, listening at a particular HTTP address requires administrator privileges. 
+            </p>
+            <p>
+                When you run it, therefore, you may get this error: &quot;HTTP could not register URL <a href="http://+:8080/">http://+:8080/</a>&quot;
+            </p>
+            <p>
+                There are two ways to avoid this error:
+            </p>
+            <ul>
+                <li>Run Visual Studio with elevated administrator permissions (right click and <b>&quot;Run as Administrator&quot;</b>), or</li>
+                <li>Use Netsh.exe to give your account permissions to reserve the URL.</li>
+            </ul>
+            <p>
+                To use Netsh.exe, open a command prompt with administrator privileges and enter the following command:following command:
+            </p>
+            <pre><span>netsh http add urlacl url = http:/+:8080/ user=machine\username</span></pre>
+            <p >
+                When you are finished self-hosting, be sure to delete the reservation:
+            </p>
+            <pre>//+:8080/</pre>
+            <h4>Application requires administrator rights. Why?</h4>
+            <p>
+                This application listens to <code>http://localhost:8080/</code>. By default, listening at a particular HTTP address requires administrator privileges.<br/>
+                There is an entry in <code>app.manifest</code> which eforces that:
+                <pre>
+&lt;requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3"&gt;
+    &lt;requestedExecutionLevel level="requireAdministrator" uiAccess="false" /&gt;
+&lt;/requestedPrivileges&gt;
+            </pre>
+                If you remove it (and recompile) you will either need to start it using "Run as Administrator" or you will need to run <code>netsh</code> as described above.
+            </p>
+        </div>
     </body>
 </html>

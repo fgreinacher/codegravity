@@ -2,8 +2,9 @@
 using System.Linq;
 using Gma.CodeGravity.Tests.TestData;
 using nsplit.CodeAnalyzis;
+using nsplit.CodeAnalyzis.Do;
 using NUnit.Framework;
-using Contains = nsplit.CodeAnalyzis.Contains;
+using Contains = nsplit.CodeAnalyzis.Do.Contains;
 
 namespace Gma.CodeGravity.Tests
 {
