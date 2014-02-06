@@ -43,6 +43,9 @@
     <Reference Include="AutoMapper">
       <HintPath>..\packages\AutoMapper.3.1.1\lib\net40\AutoMapper.dll</HintPath>
     </Reference>
+    <Reference Include="Depender.Parser">
+      <HintPath>..\packages\Depender.Parser\lib\Depender.Parser.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -62,7 +65,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Depender.Parser\packages\Microsoft.AspNet.WebApi.SelfHost.5.1.0\lib\net45\System.Web.Http.SelfHost.dll</HintPath>
     </Reference>
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -97,7 +99,6 @@
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeFactory.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\QualifiedName.cs" />
     <Compile Include="Ui\ConsoleUi.cs" />
-    <Compile Include="Ui\FormsUi.cs" />
     <Compile Include="Helper\FileType.cs" />
     <Compile Include="AppState.cs" />
     <Compile Include="Ui\WebUi.cs" />
@@ -118,12 +119,6 @@
     <None Include="readme.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Depender.Parser\Depender.Parser.csproj">
-      <Project>{4f7e0c60-13e1-402a-b79b-4cf337885cba}</Project>
-      <Name>Depender.Parser</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="html\img\c.png">

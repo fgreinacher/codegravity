@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Depender.Parser", "Depender.Parser\Depender.Parser.csproj", "{4F7E0C60-13E1-402A-B79B-4CF337885CBA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gma.CodeGravity.Tests", "Gma.CodeGravity.Tests\Gma.CodeGravity.Tests.csproj", "{8AA40642-7259-45BC-B96D-A0EE4B6CC68E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nsplit", "nsplit\nsplit.csproj", "{7416F52D-821A-4392-8BAF-A2F705D099E2}"
@@ -20,10 +18,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4F7E0C60-13E1-402A-B79B-4CF337885CBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4F7E0C60-13E1-402A-B79B-4CF337885CBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4F7E0C60-13E1-402A-B79B-4CF337885CBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4F7E0C60-13E1-402A-B79B-4CF337885CBA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8AA40642-7259-45BC-B96D-A0EE4B6CC68E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8AA40642-7259-45BC-B96D-A0EE4B6CC68E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8AA40642-7259-45BC-B96D-A0EE4B6CC68E}.Release|Any CPU.ActiveCfg = Release|Any CPU
