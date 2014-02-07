@@ -13,6 +13,8 @@ namespace nsplit.Api.Dto
     [DataContract]
     public class Tree
     {
+        private Tree[] m_Children;
+
         [DataMember(Name = "id")]
         public int Id { get; set; }
 
@@ -21,14 +23,5 @@ namespace nsplit.Api.Dto
 
         [DataMember(Name = "children")]
         public Tree[] Children { get; set; }
-
-        [IgnoreDataMember]
-        public bool IsLeaf { get; set; }
-
-        [DataMember(Name = "icon")]
-        public string Icon
-        {
-            get { return IsLeaf ? "/img/c.png" : "/img/n.png"; }
-        }
     }
 }

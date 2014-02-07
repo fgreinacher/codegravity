@@ -11,7 +11,8 @@ var toolTip = d3.select(document.getElementById("toolTip"));
 var vis = d3.select("#viewport").append("svg:svg");
 window.onresize = resize;
 
-var force = d3.layout.force()
+var force = d3.layout
+    .force()
     .on("tick", tick);
 
 function get(name) {
@@ -35,7 +36,10 @@ d3.json("api/dependencies/graph?name=" + get("name"), function(json) {
         .jstree({
             "core": {
                 "data":
-                    json.tree
+                    json.tree,
+                "themes": {
+                    "icons": false
+                }
             },
             "checkbox": {
                 "keep_selected_style": false
@@ -166,10 +170,13 @@ function update() {
         .data(nodes, function(d) { return d.id; })
         .style("fill", function(d) { return d.getColor(); });
 
-    node.enter().append("svg:circle")
-        .attr("class", "node")
+    node.exit().remove();
+
+    node.enter()
+        .append("svg:circle")
         .attr("cx", function(d) { return d.x; })
         .attr("cy", function(d) { return d.y; })
+        .attr("class", "node")
         .attr("r", function(d) { return d.getRadius(); })
         .style("fill", function(d) { return d.getColor(); })
         .style("stroke", function(d) { return root.selected[d.id] ? "#111" : "#fff"; })
@@ -177,8 +184,6 @@ function update() {
         .on("mouseover", vertexMouseOver)
         .on("mouseout", vertexMouseOut)
         .call(force.drag);
-
-    node.exit().remove();
 }
 
 function tick() {

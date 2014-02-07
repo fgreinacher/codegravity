@@ -3,7 +3,7 @@
 // See license.txt or http://opensource.org/licenses/mit-license.php
 
 function Vertex(node) {
-
+    
     var vertex = this;
     //copy all properties
     Object.keys(node).forEach(function (key) {
@@ -86,13 +86,13 @@ Vertex.prototype.explode = function() {
     var initialX = vertex.x;
     var initialY = vertex.y;
     force.stop();
+    this.isExpanded = true;
     this.children.forEach(function(child) {
         {
             child.x = initialX + 2 * radius * (Math.random() - .5);
             child.y = initialY + 2 * radius * (Math.random() - .5);
         }
     });
-    this.isExpanded = true;
     force.resume();
 };
 
