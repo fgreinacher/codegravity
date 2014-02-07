@@ -1,0 +1,68 @@
+﻿<html>
+    <head>
+        <title>Code Gravity</title>
+        <link rel="shortcut icon" href="/img/graph.ico" />
+        <link href="css/index.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="middle">
+            <div id="warning">
+                This browser do not support SVG.<br/>
+                See: <a href="http://caniuse.com/svg">SVG browser compatibility table</a>
+            </div>
+            <h3>Code Gravity</h3>
+            <div id="progressArea">
+                Analyze:
+                <table>
+                    <tr>
+                        <td class="fieldName">Assembly file name:</td>
+                        <td><input id="assembly" type="text" placeholder="Enter assembly full local path eg. 'c:\temp\Some.Assembly.dll'" /></td>
+                    </tr>
+                    <tr>
+                        <td class="fieldName">Save results:</td>
+                        <td>
+                            <input id="save" type="checkbox"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button id="analyze">Analyze</button><br/>
+                        </td>
+                    </tr>
+                </table>
+                <ul>
+                    <li>Assembly: <span id="loaded"></span></li>
+                    <li>Analyzes: <span id="message"></span></li>
+                    <li>Progress: <span id="progress"></span></li>
+                </ul>
+
+            </div>
+            <br/>
+            <div id="results">
+                Saved results:
+                <ul id="list">
+                </ul>
+            </div>
+            <p>
+                Analyze the default assembly:
+                <button id="demo">Demo</button>
+            </p>
+            <p>The page will be redirected automatically when dependency graph is complete.</p>
+            <p>You can still <button id="goto" disabled="disabled">go to graph</button> anyway and see the incomplete dependency graph.</p>
+            <p>The graph can be realoaded anytime by clicking (F5) and newly discovered dependencies will show up.</p>
+            <p>Use mouse wheel to zoom, drag surface to pan.</p>
+            <p>You can also:</p>
+            <ul>
+                <li>mouse over nodes</li>
+                <li>click nodes</li>
+                <li>drag nodes</li>
+                <li>expand/collapse the tree</li>
+                <li>check/uncheck tree nodes</li>
+            </ul>
+        </div>
+    </body>
+    
+    <script src="js/lib/jquery.js"> </script> 
+    <script src="js/index.js"> </script>
+</html>

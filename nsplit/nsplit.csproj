@@ -33,9 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup>
     <ApplicationIcon>graph.ico</ApplicationIcon>
   </PropertyGroup>
@@ -57,6 +55,7 @@
       <HintPath>..\Depender.Parser\packages\Microsoft.AspNet.WebApi.Client.5.1.0\lib\net45\System.Net.Http.Formatting.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web.Http, Version=5.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Depender.Parser\packages\Microsoft.AspNet.WebApi.Core.5.1.0\lib\net45\System.Web.Http.dll</HintPath>
@@ -68,29 +67,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CodeAnalyzis\AnalyzerTask.cs" />
     <Compile Include="Api\AnalyzesController.cs" />
-    <Compile Include="Api\Dto\DeepNodeDto.cs" />
+    <Compile Include="Api\Dto\Tree.cs" />
     <Compile Include="Api\Dto\LinkDto.cs" />
     <Compile Include="Api\Dto\ProgressResultDto.cs" />
     <Compile Include="Api\Dto\StartResultDto.cs" />
-    <Compile Include="Ui\AssemblyLoadUi.cs" />
+    <Compile Include="Api\Dto\GraphDto.cs" />
+    <Compile Include="Api\Storage.cs" />
+    <Compile Include="Graph.cs" />
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
     <Compile Include="CodeAnalyzis\AnalyzesProgressEventArgs.cs" />
     <Compile Include="CodeAnalyzis\Do\Contains.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\AdjacencyMatrix.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependecyKindExtensions.cs" />
-    <Compile Include="CodeAnalyzis\DependencyGraph.cs" />
+    <Compile Include="CodeAnalyzis\Analyzer.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependencyKinds.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\Edge.cs" />
     <Compile Include="Api\DependenciesController.cs" />
     <Compile Include="CodeAnalyzis\Do\Dependency.cs" />
     <Compile Include="CodeAnalyzis\Do\DependencyKind.cs" />
-    <Compile Include="Api\Dto\EdgeDto.cs" />
     <Compile Include="CodeAnalyzis\EdgeAddedEventArgs.cs" />
     <Compile Include="CodeAnalyzis\Do\Implements.cs" />
     <Compile Include="CodeAnalyzis\Do\MethodCall.cs" />
-    <Compile Include="Api\Dto\NodeDto.cs" />
-    <Compile Include="Api\TreeViewController.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\INode.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\Tree.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\Leaf.cs" />
@@ -98,11 +97,9 @@
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeBase.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeFactory.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\QualifiedName.cs" />
-    <Compile Include="Ui\ConsoleUi.cs" />
     <Compile Include="Helper\FileType.cs" />
     <Compile Include="AppState.cs" />
-    <Compile Include="Ui\WebUi.cs" />
-    <None Include="app.manifest" />
+    <Compile Include="Helper\AssemblyLoadHelper.cs" />
     <None Include="html\css\main.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -113,6 +110,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="nsplit.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +201,7 @@ if not exist $(SolutionDir)\xcopy md $(SolutionDir)\xcopy
 copy /Y $(TargetDir)\*.dll $(SolutionDir)\xcopy\
 copy /Y $(TargetDir)\*.exe $(SolutionDir)\xcopy\
 copy /Y $(TargetDir)\*.html $(SolutionDir)\xcopy\
+copy /Y $(TargetDir)\*.bat $(SolutionDir)\xcopy\
 if not exist $(SolutionDir)\xcopy\html md $(SolutionDir)\xcopy\html
 xcopy /E /Y $(TargetDir)\html $(SolutionDir)\xcopy\html
 </PostBuildEvent>

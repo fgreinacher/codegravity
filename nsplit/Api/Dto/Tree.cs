@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 namespace nsplit.Api.Dto
 {
     [DataContract]
-    public class NodeDto
+    public class Tree
     {
         [DataMember(Name = "id")]
         public int Id { get; set; }
@@ -19,14 +19,11 @@ namespace nsplit.Api.Dto
         [DataMember(Name = "text")]
         public string Name { get; set; }
 
+        [DataMember(Name = "children")]
+        public Tree[] Children { get; set; }
+
         [IgnoreDataMember]
         public bool IsLeaf { get; set; }
-
-        [DataMember(Name = "children")]
-        public bool CanHaveChildren
-        {
-            get { return !IsLeaf; }
-        }
 
         [DataMember(Name = "icon")]
         public string Icon

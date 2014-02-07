@@ -9,8 +9,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using System.ServiceModel;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
+using AutoMapper;
+using nsplit.Api;
+using nsplit.CodeAnalyzis;
 using nsplit.Helper;
 
 #endregion
@@ -19,18 +23,54 @@ namespace nsplit
 {
     internal class Program
     {
-
         public const string HttpLocalhost = "http://localhost:8080";
 
         [STAThread]
         private static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+            {
+                Console.WriteLine(e.ExceptionObject.ToString());
+                Environment.Exit(1);
+            };
+
+            if (args.Length > 0)
+            {
+                var path = args[0];
+                string directoryName = Path.GetDirectoryName(path) ?? Path.GetTempPath();
+                var storage = new Storage(Path.Combine(directoryName, "_DependencyAnalyzes"));
+
+                string folderPath = Path.GetDirectoryName(path);
+                ResolveEventHandler handler = (sender, resolveArgs) => AssemblyLoadHelper.Resolver(folderPath, resolveArgs);
+                AppDomain.CurrentDomain.AssemblyResolve += handler;
+
+                string message;
+                Assembly assembly;
+                bool isLoaded = AssemblyLoadHelper.TryLoad(path, out assembly, out message );
+                if (!isLoaded)
+                {
+                    Console.WriteLine(message);
+                    Environment.Exit(1);
+                };
+                var graph = Analyzer.Analyze(assembly).GetGraph();
+                var dto = Mapper.DynamicMap<GraphDto>(graph);
+                storage.Save(dto);
+                return;
+            }
+
+            var storagePath = Path.Combine(GetExePath(), "data");
+            AppState.Storage = new Storage(storagePath);
+            AppState.Task = AnalyzerTask.Idle();
             StartHttpServer();
         }
 
+
         private static void StartHttpServer()
         {
-            var config = new HttpSelfHostConfiguration(HttpLocalhost);
+            var config = new HttpSelfHostConfiguration(HttpLocalhost)
+            {
+                HostNameComparisonMode = HostNameComparisonMode.Exact
+            };
 
             string webFolder = Path.Combine(GetExePath(), "html");
 
@@ -72,7 +112,6 @@ namespace nsplit
                 Console.ReadKey();
             }
         }
-
 
 
         private static string GetExePath()

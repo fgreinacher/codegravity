@@ -14,9 +14,15 @@ window.onresize = resize;
 var force = d3.layout.force()
     .on("tick", tick);
 
-d3.json("api/treeview/deep", function(jsonRoot) {
+function get(name) {
+    if (name = (new RegExp('[?&]' + encodeURIComponent(name) + '=([^&]*)')).exec(location.search))
+        return decodeURIComponent(name[1]);
+    else return "";
+}
 
-    root = new Vertex(jsonRoot);
+d3.json("api/dependencies/graph?name=" + get("name"), function(json) {
+
+    root = new Vertex(json.tree);
     root.fixed = true;
     root.selected = [];
 
@@ -29,7 +35,7 @@ d3.json("api/treeview/deep", function(jsonRoot) {
         .jstree({
             "core": {
                 "data":
-                    jsonRoot
+                    json.tree
             },
             "checkbox": {
                 "keep_selected_style": false
@@ -76,8 +82,7 @@ d3.json("api/treeview/deep", function(jsonRoot) {
             update();
         });
 
-    d3.json("api/dependencies/links", function(jsonLinks) {
-        rawLinks = jsonLinks;
+        rawLinks = json.links;
         resize();
         update();
         var current = root;
@@ -85,7 +90,6 @@ d3.json("api/treeview/deep", function(jsonRoot) {
             click(current);
             current = current.children[0];
         }
-    });
 });
 
 

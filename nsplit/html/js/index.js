@@ -2,7 +2,8 @@
 // Copyright (c) 2014 George Mamaladze, Florian Greinacher
 // See license.txt or http://opensource.org/licenses/mit-license.php
 function startAnalyzes(file) {
-    $.getJSON("api/analyzes/start?file=" + file, function(data) {
+    var saveChecked = $("input:checked").length>0;
+    $.getJSON("api/analyzes/start?file=" + file + "&save=" + saveChecked, function (data) {
         $("#loaded").text(data.message);
         $("#message").text("Started");
         if (data.ok) {
@@ -46,5 +47,17 @@ $(document).ready(function () {
 
     $("#demo").on("click", function () {
         startAnalyzes("");
+    });
+
+    $.getJSON("api/dependencies/names", function(data) {
+        var list = $("#list");
+        data.forEach(function(name) {
+            var li = $("<li></li>");
+            var a = $("<a></a>")
+                .text(name)
+                .attr("href", "/main.html?name=" + name);
+            li.append(a);
+            list.append(li);
+        });
     });
 });

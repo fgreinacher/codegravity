@@ -5,10 +5,8 @@
 #region usings
 
 using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
 using AutoMapper;
-using nsplit.Api.Dto;
 
 #endregion
 
@@ -16,35 +14,30 @@ namespace nsplit.Api
 {
     public class DependenciesController : ApiController
     {
-        [ActionName("links")]
-        public IEnumerable<LinkDto> GetAll()
+        [ActionName("graph")]
+        public GraphDto GetGraph(string name)
         {
             return
-                AppState
-                    .GetAll()
-                    .Select(Mapper.DynamicMap<LinkDto>);
+                string.IsNullOrEmpty(name)
+                    ? GetCurrent()
+                    : GetSaved(name);
         }
 
-        [ActionName("edges")]
-        public IEnumerable<EdgeDto> GetEdges(string id)
+        [ActionName("names")]
+        public IEnumerable<string> GetNames()
         {
-            return
-                AppState
-                    .InOut(id)
-                    .Select(edge => new EdgeDto
-                    {
-                        Kinds = edge.Kinds.ToString(),
-                        Sources = Path(edge.Source),
-                        Targets = Path(edge.Target)
-                    });
+            return AppState.Storage.GetNames();
+        }
+        
+        private GraphDto GetSaved(string name)
+        {
+            return AppState.Storage.Load(name);
         }
 
-        private static IEnumerable<int> Path(int id)
+        private GraphDto GetCurrent()
         {
-            return AppState
-                .GetNode(id)
-                .Path()
-                .Select(n => n.Id);
+            var graph = AppState.Task.GetGraph();
+            return Mapper.DynamicMap<GraphDto>(graph);
         }
     }
 }

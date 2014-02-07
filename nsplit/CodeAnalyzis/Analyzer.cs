@@ -18,37 +18,62 @@ using nsplit.CodeAnalyzis.Do;
 
 namespace nsplit.CodeAnalyzis
 {
-    internal class DependencyGraph
+    internal class Analyzer
     {
         private readonly AdjacencyMatrix m_Matrix;
         private readonly INode[] m_NodesById;
         private readonly Tree m_Tree;
         private readonly Type[] m_Types;
+        private readonly string m_Name;
 
-        public DependencyGraph(Tree tree, Type[] types, AdjacencyMatrix matrix, INode[] nodesById)
+        public Analyzer(Tree tree, Type[] types, AdjacencyMatrix matrix, INode[] nodesById, string name)
         {
             m_Tree = tree;
             m_Types = types;
             m_Matrix = matrix;
             m_NodesById = nodesById;
+            m_Name = name;
         }
 
         public event EventHandler<EdgeAddedEventArgs> OnEdgeAdded;
         public event EventHandler<AnalyzesProgressEventArgs> OnProgress;
 
-        public static DependencyGraph StartAnalyzesAsync(Assembly assembly, CancellationToken token)
+        public static Analyzer Empty()
+        {
+            var types = new Type[0];
+            var tree = BuildTree(types, string.Empty);
+            var nodesById = new INode[0];
+            var matrix = new AdjacencyMatrix(0);
+            var graph = new Analyzer(tree, types, matrix, nodesById, "NULL");
+            return graph;
+        }
+
+        public static Analyzer StartAnalyzesAsync(Assembly assembly, CancellationToken token)
+        {
+            var graph = AnalyzeSyncPart(assembly);
+
+            Task.Factory
+                .StartNew(graph.Analyze, token)
+                .ContinueWith(task => graph.InvokeOnProgress(AnalyzesProgressEventArgs.Finished()), token);
+
+            return graph;
+        }
+
+        public static Analyzer Analyze(Assembly assembly)
+        {
+            var graph = AnalyzeSyncPart(assembly);
+            graph.Analyze();
+            return graph;
+        }
+
+        private static Analyzer AnalyzeSyncPart(Assembly assembly)
         {
             var types = assembly.Types().ToArray();
             var rootName = assembly.GetName().Name;
             var tree = BuildTree(types, rootName);
             var nodesById = tree.Nodes.Reverse().ToArray();
             var matrix = new AdjacencyMatrix(nodesById.Length);
-            var graph = new DependencyGraph(tree, types, matrix, nodesById);
-
-            Task.Factory
-                .StartNew(graph.Analyze, token)
-                .ContinueWith(task => graph.InvokeOnProgress(AnalyzesProgressEventArgs.Finished()), token);
-
+            var graph = new Analyzer(tree, types, matrix, nodesById, assembly.GetName().Name);
             return graph;
         }
 
@@ -72,21 +97,6 @@ namespace nsplit.CodeAnalyzis
             DoAnalyzeTask(m_Types, AnalyzerExtensions.Implements, "Analyzing implements");
             DoAnalyzeTask(m_Types, AnalyzerExtensions.Contains, "Analyzing contain");
             DoAnalyzeTask(m_Types, AnalyzerExtensions.Calls, "Analyzing calls");
-        }
-
-        public INode GetNode(int idNo)
-        {
-            return m_NodesById[idNo];
-        }
-
-        public IEnumerable<Edge> InOut(string id)
-        {
-            int idNo = (id == "#") ? 0 : Int32.Parse(id);
-            INode node = GetNode(idNo);
-            var allLeafs = node.Leafs().ToArray();
-            var outDeps = allLeafs.SelectMany(n => m_Matrix.Out(node.Id));
-            var inDeps = allLeafs.SelectMany(n => m_Matrix.In(node.Id));
-            return outDeps.Concat(inDeps).SelectMany(e => e.FlattenFlags()).Distinct();
         }
 
 
@@ -142,9 +152,11 @@ namespace nsplit.CodeAnalyzis
             handler.Invoke(this, eventArgs);
         }
 
-        public IEnumerable<Edge> All()
+        public Graph GetGraph()
         {
-            return m_Matrix.All();
+            var tree = m_NodesById[0];
+            var links = m_Matrix.All();
+            return new Graph(tree, links, m_Name);
         }
     }
 }
