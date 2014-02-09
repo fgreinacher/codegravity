@@ -12,6 +12,10 @@ button {
     text-transform: uppercase;
 }
 
+h2 {
+    text-align: center;
+}
+
 #warning {
     font-size: large;
     color:darkred;

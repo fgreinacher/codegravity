@@ -17,27 +17,13 @@ namespace nsplit.Api
         [ActionName("graph")]
         public GraphDto GetGraph(string name)
         {
-            return
-                string.IsNullOrEmpty(name)
-                    ? GetCurrent()
-                    : GetSaved(name);
+            return Program.Storage.Load(name);
         }
 
         [ActionName("names")]
         public IEnumerable<string> GetNames()
         {
-            return AppState.Storage.GetNames();
-        }
-        
-        private GraphDto GetSaved(string name)
-        {
-            return AppState.Storage.Load(name);
-        }
-
-        private GraphDto GetCurrent()
-        {
-            var graph = AppState.Task.GetGraph();
-            return Mapper.DynamicMap<GraphDto>(graph);
+            return Program.Storage.GetNames();
         }
     }
 }

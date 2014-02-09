@@ -6,13 +6,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using nsplit.CodeAnalyzis.DataStructures.DependencyGraph;
 using nsplit.CodeAnalyzis.DataStructures.TypeTree;
 using nsplit.CodeAnalyzis.Do;
+using nsplit.Helper;
 
 #endregion
 
@@ -20,63 +20,62 @@ namespace nsplit.CodeAnalyzis
 {
     internal class Analyzer
     {
-        private readonly AdjacencyMatrix m_Matrix;
-        private readonly INode[] m_NodesById;
-        private readonly Tree m_Tree;
-        private readonly Type[] m_Types;
-        private readonly string m_Name;
+        private readonly Action<AnalyzesProgress> m_OnProgres;
+        private Tree m_Tree;
+        private AdjacencyMatrix m_Matrix;
 
-        public Analyzer(Tree tree, Type[] types, AdjacencyMatrix matrix, INode[] nodesById, string name)
+        public Analyzer(Action<AnalyzesProgress> onProgres)
         {
-            m_Tree = tree;
-            m_Types = types;
-            m_Matrix = matrix;
-            m_NodesById = nodesById;
-            m_Name = name;
+            m_OnProgres = onProgres;
+            m_Tree = new Tree(new NodeFactory(), string.Empty);
         }
 
-        public event EventHandler<EdgeAddedEventArgs> OnEdgeAdded;
-        public event EventHandler<AnalyzesProgressEventArgs> OnProgress;
-
-        public static Analyzer Empty()
+        public Graph GetGraph()
         {
-            var types = new Type[0];
-            var tree = BuildTree(types, string.Empty);
-            var nodesById = new INode[0];
-            var matrix = new AdjacencyMatrix(0);
-            var graph = new Analyzer(tree, types, matrix, nodesById, "NULL");
-            return graph;
+            var tree = m_Tree.Root;
+            var links = m_Matrix.All();
+            return new Graph(tree, links);
         }
 
-        public static Analyzer StartAnalyzesAsync(Assembly assembly, CancellationToken token)
+        public Graph Analyze(string assemblyPath)
         {
-            var graph = AnalyzeSyncPart(assembly);
-
-            Task.Factory
-                .StartNew(graph.Analyze, token)
-                .ContinueWith(task => graph.InvokeOnProgress(AnalyzesProgressEventArgs.Finished()), token);
-
-            return graph;
+            var directory = Path.GetDirectoryName(assemblyPath) ?? string.Empty;
+            ResolveEventHandler handler = (sender, args) => Resolve(args, directory);
+            AppDomain.CurrentDomain.AssemblyResolve += handler;
+            try
+            {
+                var assembly = Assembly.LoadFile(assemblyPath);
+                Analyze(assembly);
+            }
+            finally
+            {
+                AppDomain.CurrentDomain.AssemblyResolve -= handler;
+            }
+            return GetGraph();
         }
 
-        public static Analyzer Analyze(Assembly assembly)
-        {
-            var graph = AnalyzeSyncPart(assembly);
-            graph.Analyze();
-            return graph;
-        }
-
-        private static Analyzer AnalyzeSyncPart(Assembly assembly)
+        private Graph Analyze(Assembly assembly)
         {
             var types = assembly.Types().ToArray();
             var rootName = assembly.GetName().Name;
-            var tree = BuildTree(types, rootName);
-            var nodesById = tree.Nodes.Reverse().ToArray();
-            var matrix = new AdjacencyMatrix(nodesById.Length);
-            var graph = new Analyzer(tree, types, matrix, nodesById, assembly.GetName().Name);
-            return graph;
+            m_Tree = BuildTree(types, rootName);
+            var nodesById = m_Tree.Nodes.Reverse().ToArray();
+            m_Matrix = new AdjacencyMatrix(nodesById.Length);
+            DoAnalyzeTasks(types);
+            return GetGraph();
         }
 
+        private static Assembly Resolve(ResolveEventArgs args, string directory)
+        {
+            var name = args.Name;
+            var fileName = name.Substring(0, name.IndexOf(','));
+            var fullPath = Path.Combine(directory, fileName + ".dll");
+            if (File.Exists(fullPath)) return Assembly.LoadFile(fullPath);
+            fullPath = Path.Combine(directory, fileName + ".exe");
+            if (File.Exists(fullPath)) return Assembly.LoadFile(fullPath);
+            Console.WriteLine("Can not resolve assembly [{0}] in folder [{1}].", name, directory);
+            return null;
+        }
 
         private static Tree BuildTree(IEnumerable<Type> types, string rootName)
         {
@@ -91,12 +90,12 @@ namespace nsplit.CodeAnalyzis
             return tree;
         }
 
-        private void Analyze()
+        private void DoAnalyzeTasks(Type[] types)
         {
-            DoAnalyzeTask(m_Types, AnalyzerExtensions.Uses, "Analyzing uses");
-            DoAnalyzeTask(m_Types, AnalyzerExtensions.Implements, "Analyzing implements");
-            DoAnalyzeTask(m_Types, AnalyzerExtensions.Contains, "Analyzing contain");
-            DoAnalyzeTask(m_Types, AnalyzerExtensions.Calls, "Analyzing calls");
+            DoAnalyzeTask(types, AnalyzerExtensions.Uses, "Analyzing uses");
+            DoAnalyzeTask(types, AnalyzerExtensions.Implements, "Analyzing implements");
+            DoAnalyzeTask(types, AnalyzerExtensions.Contains, "Analyzing contain");
+            DoAnalyzeTask(types, AnalyzerExtensions.Calls, "Analyzing calls");
         }
 
 
@@ -110,27 +109,23 @@ namespace nsplit.CodeAnalyzis
                     Edge edge;
                     bool added = Add(dependecy, out edge);
                     if (!added) continue;
-                    InvokeOnEdgeAdded(edge);
                 }
-                InvokeOnProgress(new AnalyzesProgressEventArgs(taskName, i, types.Length, false));
+                InvokeOnProgress(new AnalyzesProgress(taskName, i, types.Length, false));
             }
-            InvokeOnProgress(new AnalyzesProgressEventArgs(taskName, types.Length, types.Length, false));
+            InvokeOnProgress(new AnalyzesProgress(taskName, types.Length, types.Length, false));
         }
 
-        private void InvokeOnProgress(AnalyzesProgressEventArgs eventArgs)
+        private void InvokeOnProgress(AnalyzesProgress eventArgs)
         {
-            var handler = OnProgress;
-            if (handler == null) return;
-            handler.Invoke(this, eventArgs);
+            if (m_OnProgres == null) return;
+            m_OnProgres.Invoke(eventArgs);
         }
 
         private bool Add(Dependency dependency, out Edge edge)
         {
             edge = null;
             //NOTE: For instance IEnumerable.FullName == null
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (dependency.Source.FullName == null) return false;
-            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
             if (dependency.Target.FullName == null) return false;
 
             INode source;
@@ -142,21 +137,6 @@ namespace nsplit.CodeAnalyzis
             if (!targetFound) return false;
 
             return m_Matrix.Add(source.Id, target.Id, dependency.Kind, out edge);
-        }
-
-        private void InvokeOnEdgeAdded(Edge edge)
-        {
-            var handler = OnEdgeAdded;
-            if (handler == null) return;
-            var eventArgs = new EdgeAddedEventArgs(edge);
-            handler.Invoke(this, eventArgs);
-        }
-
-        public Graph GetGraph()
-        {
-            var tree = m_NodesById[0];
-            var links = m_Matrix.All();
-            return new Graph(tree, links, m_Name);
         }
     }
 }

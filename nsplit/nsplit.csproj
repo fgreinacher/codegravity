@@ -67,17 +67,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CodeAnalyzis\AnalyzerTask.cs" />
-    <Compile Include="Api\AnalyzesController.cs" />
     <Compile Include="Api\Dto\Tree.cs" />
     <Compile Include="Api\Dto\LinkDto.cs" />
     <Compile Include="Api\Dto\ProgressResultDto.cs" />
     <Compile Include="Api\Dto\StartResultDto.cs" />
     <Compile Include="Api\Dto\GraphDto.cs" />
     <Compile Include="Api\Storage.cs" />
-    <Compile Include="Graph.cs" />
+    <Compile Include="CodeAnalyzis\Do\Graph.cs" />
     <Compile Include="CodeAnalyzis\AnalyzerExtensions.cs" />
-    <Compile Include="CodeAnalyzis\AnalyzesProgressEventArgs.cs" />
+    <Compile Include="CodeAnalyzis\AnalyzesProgress.cs" />
     <Compile Include="CodeAnalyzis\Do\Contains.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\AdjacencyMatrix.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\DependencyGraph\DependecyKindExtensions.cs" />
@@ -98,7 +96,6 @@
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\NodeFactory.cs" />
     <Compile Include="CodeAnalyzis\DataStructures\TypeTree\QualifiedName.cs" />
     <Compile Include="Helper\FileType.cs" />
-    <Compile Include="AppState.cs" />
     <Compile Include="Helper\AssemblyLoadHelper.cs" />
     <None Include="html\css\main.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -178,6 +175,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="graph.ico" />
+    <None Include="html\js\tree.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="html\img\assembly.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

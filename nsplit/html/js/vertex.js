@@ -74,10 +74,15 @@ Vertex.prototype.flatten = function(deep) {
         : [this];
 };
 
-Vertex.prototype.toggle = function() {
-    if (this.isExpanded) this.implode();
-    else this.explode();
-};
+
+Vertex.prototype.toggle = function (expand, deep) {
+    var vertex = this;
+    if (vertex.isExpanded == expand) return;
+    if (expand) this.explode();
+    else this.implode();
+    if (!deep || !vertex.children) return;
+    vertex.children.forEach(function (el) { el.toggle(expand, deep); });
+}
 
 Vertex.prototype.explode = function() {
     if (this.children == null) return;

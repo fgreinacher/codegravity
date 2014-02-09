@@ -8,13 +8,11 @@ namespace nsplit
     {
         private readonly INode m_Tree;
         private readonly IEnumerable<Edge> m_Links;
-        private readonly string m_Name;
 
-        public Graph(INode tree, IEnumerable<Edge> links, string name)
+        public Graph(INode tree, IEnumerable<Edge> links)
         {
             m_Tree = tree;
             m_Links = links;
-            m_Name = name;
         }
 
         public INode Tree
@@ -29,7 +27,7 @@ namespace nsplit
 
         public string Name
         {
-            get { return m_Name; }
+            get { return m_Tree.Name; }
         }
     }
 }

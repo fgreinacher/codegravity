@@ -12,8 +12,11 @@ using System.Reflection;
 
 namespace nsplit.Helper
 {
-    internal static class AssemblyLoadHelper
+    internal class AssemblyLoadHelper : IDisposable
     {
+
+
+
         public static bool TryLoad(string path, out Assembly assembly, out string message)
         {
             try
@@ -36,22 +39,11 @@ namespace nsplit.Helper
             return true;
         }
 
-        public static Assembly Resolver(string folderPath, ResolveEventArgs resolveArgs)
-        {
-            var name = resolveArgs.Name;
-            var fileName = name.Substring(0, name.IndexOf(','));
 
-            string fullPath = Path.Combine(folderPath, fileName + ".dll");
-            if (!File.Exists(fullPath))
-            {
-                fullPath = Path.Combine(folderPath, fileName + ".exe");
-                if (!File.Exists(fullPath))
-                {
-                    Console.WriteLine("Can not resolve assembly [{0}] in folder [{1}].", name, folderPath);
-                    return null;
-                }
-            }
-            return Assembly.LoadFile(fullPath);
+
+        public void Dispose()
+        {
+            
         }
     }
 }

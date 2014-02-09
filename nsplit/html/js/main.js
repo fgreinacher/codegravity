@@ -21,7 +21,7 @@ function get(name) {
     else return "";
 }
 
-d3.json("api/dependencies/graph?name=" + get("name"), function(json) {
+d3.json("api/dependencies/graph?name=" + get("name"), function (json) {
 
     root = new Vertex(json.tree);
     root.fixed = true;
@@ -32,68 +32,25 @@ d3.json("api/dependencies/graph?name=" + get("name"), function(json) {
 
     verticesById = vertices.indexById();
 
-    $("#typetree")
-        .jstree({
-            "core": {
-                "data":
-                    json.tree,
-                "themes": {
-                    "icons": false
-                }
-            },
-            "checkbox": {
-                "keep_selected_style": false
-            },
-            "contextmenu": {
-                "items": function(n) {
-                    return {
-                        "ExpandSubTree": {
-                            "label": "EXPAND ALL",
-                            "action": function (obj) {
-                                var tree = $('#typetree').jstree(true);
-                                tree.open_all(n);
-                                tree.deselect_all();
-                                var v = verticesById[n.original.id];
-                                expandGraph(v);
-                                function expandGraph(vertex) {
-                                    if (!vertex.children) return;
-                                    vertex.children.forEach(function(el) { expandGraph(el); });
-                                    if (!vertex.isExpanded) click(vertex);
-                                }
-                            }
-                        }
-                    };
-                }
-            },
-            "plugins": ["checkbox", "contextmenu"]
-        })
-        .on('open_node.jstree', function(e, data) {
-            var vertex = verticesById[data.node.original.id];
-            if (!vertex.isExpanded) click(vertex);
-        })
-        .on('close_node.jstree', function(e, data) {
-            var n = data.node;
-            if (!n.children) return;
-            n.children.forEach(function(el) { data.instance.close_node(el); });
-            var vertex = verticesById[n.original.id];
-            if (vertex.isExpanded) click(vertex);
-        })
-        .on('changed.jstree', function(e, data) {
-            root.selected = [];
-            data.selected.forEach(function(el) {
-                root.selected[el] = true;
-            });
-            update();
-        });
-
-        rawLinks = json.links;
-        resize();
+    tree = (new Tree("#typetree", json.tree))
+    .onOpen(function (id, deep) {
+        var vertex = verticesById[id];
+        vertex.toggle(true, deep);
         update();
-        var current = root;
-        while (current.children != null && current.children.length == 1) {
-            click(current);
-            current = current.children[0];
-        }
+    })
+    .onClose(function (id, deep) {
+        var vertex = verticesById[id];
+        vertex.toggle(false, deep);
+        update();
+    })
+    .onSelect(function (ids) {
+         root.selected = ids;
+         update();
+     });
+
+    rawLinks = json.links;
+    resize();
+    update();
 });
 
 
@@ -236,7 +193,7 @@ function hideText() {
 }
 
 function click(d) {
-    d.toggle();
+    d.toggle(!d.isExpanded, false);
     update();
 }
 

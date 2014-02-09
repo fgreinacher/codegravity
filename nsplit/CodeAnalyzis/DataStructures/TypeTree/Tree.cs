@@ -32,6 +32,11 @@ namespace nsplit.CodeAnalyzis.DataStructures.TypeTree
             get { return m_NodeFactory.Nodes; }
         }
 
+        public INode Root
+        {
+            get { return m_Root; }
+        }
+
         public INode Add(string fullName)
         {
             var qualifiedName = QualifiedName.Parse(fullName);

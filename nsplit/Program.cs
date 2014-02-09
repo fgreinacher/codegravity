@@ -24,6 +24,8 @@ namespace nsplit
     internal class Program
     {
         public const string HttpLocalhost = "http://localhost:8080";
+        
+        public static Storage Storage;
 
         [STAThread]
         private static void Main(string[] args)
@@ -34,34 +36,46 @@ namespace nsplit
                 Environment.Exit(1);
             };
 
+            var storagePath = Path.Combine(GetExePath(), "data");
+            Storage = new Storage(storagePath);
+           
             if (args.Length > 0)
             {
-                var path = args[0];
-                string directoryName = Path.GetDirectoryName(path) ?? Path.GetTempPath();
-                var storage = new Storage(Path.Combine(directoryName, "_DependencyAnalyzes"));
-
-                string folderPath = Path.GetDirectoryName(path);
-                ResolveEventHandler handler = (sender, resolveArgs) => AssemblyLoadHelper.Resolver(folderPath, resolveArgs);
-                AppDomain.CurrentDomain.AssemblyResolve += handler;
-
-                string message;
-                Assembly assembly;
-                bool isLoaded = AssemblyLoadHelper.TryLoad(path, out assembly, out message );
-                if (!isLoaded)
-                {
-                    Console.WriteLine(message);
-                    Environment.Exit(1);
-                };
-                var graph = Analyzer.Analyze(assembly).GetGraph();
-                var dto = Mapper.DynamicMap<GraphDto>(graph);
-                storage.Save(dto);
+                Analyze(args[0], true, Storage);
                 return;
             }
 
-            var storagePath = Path.Combine(GetExePath(), "data");
-            AppState.Storage = new Storage(storagePath);
-            AppState.Task = AnalyzerTask.Idle();
             StartHttpServer();
+        }
+
+        public static void Analyze(string assemblyPath, bool saveResults, Storage storage)
+        {
+            var ePrev = AnalyzesProgress.Started();
+            var analyzer = new Analyzer(eCurrent =>
+            {
+                ePrev = DoProgress(eCurrent, ePrev);
+            });
+
+            var graph = analyzer.Analyze(assemblyPath);
+            var dto = Mapper.DynamicMap<GraphDto>(graph);
+            if (saveResults)storage.Save(dto);
+        }
+
+        private static AnalyzesProgress DoProgress(AnalyzesProgress eCurrent, AnalyzesProgress ePrev)
+        {
+            if (eCurrent.IsFinished)
+            {
+                Console.WriteLine("Analyzes finished.");
+                return ePrev;
+            }
+            var currentPercentage = eCurrent.Actual*100/eCurrent.Max;
+            int prevPercentage = ePrev.Actual*100/ePrev.Max;
+            if (currentPercentage != prevPercentage)
+            {
+                Console.WriteLine("\r{0}\t{1}", eCurrent.Message, currentPercentage);
+                ePrev = eCurrent;
+            }
+            return ePrev;
         }
 
 
