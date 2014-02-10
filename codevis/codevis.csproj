@@ -47,8 +47,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblySearchHelper.cs" />
     <Compile Include="AssemblyLoadHelper.cs" />
+    <Compile Include="AssemblySearchHelper.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DependencyForceGraph\Analyzer.cs" />
     <Compile Include="DependencyForceGraph\AnalyzerExtensions.cs" />
     <Compile Include="DependencyForceGraph\AnalyzesProgress.cs" />
@@ -80,13 +82,13 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="graph_light.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Gma.CodeVisuals.WebApi\Gma.CodeVisuals.WebApi.csproj">
       <Project>{7416f52d-821a-4392-8baf-a2f705d099e2}</Project>
       <Name>Gma.CodeVisuals.WebApi</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="graph_light.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
