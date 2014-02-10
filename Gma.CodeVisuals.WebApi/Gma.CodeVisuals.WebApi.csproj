@@ -76,6 +76,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\WebServerOnFolder.cs" />
+    <None Include="_DependencyForceGraphs\[DEMO] System.Core.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -167,7 +170,9 @@ copy /Y $(TargetDir)\$(TargetName)$(TargetExt) $(SolutionDir)\xcopy\
 copy /Y $(TargetDir)\*.html $(SolutionDir)\xcopy\
 copy /Y $(TargetDir)\*.bat $(SolutionDir)\xcopy\
 if not exist $(SolutionDir)\xcopy\html md $(SolutionDir)\xcopy\html
-xcopy /E /Y $(TargetDir)\html $(SolutionDir)\xcopy\html</PostBuildEvent>
+xcopy /E /Y $(TargetDir)\html $(SolutionDir)\xcopy\html
+if not exist $(SolutionDir)\xcopy\_DependencyForceGraphs md $(SolutionDir)\xcopy\_DependencyForceGraphs
+xcopy /E /Y $(TargetDir)\_DependencyForceGraphs $(SolutionDir)\xcopy\_DependencyForceGraphs</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
