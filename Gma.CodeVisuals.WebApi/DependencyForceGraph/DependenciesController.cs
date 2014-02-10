@@ -6,11 +6,11 @@
 
 using System.Collections.Generic;
 using System.Web.Http;
-using AutoMapper;
+using Gma.CodeVisuals.WebApi.DependencyForceGraph.Dto;
 
 #endregion
 
-namespace nsplit.Api
+namespace Gma.CodeVisuals.WebApi.DependencyForceGraph
 {
     public class DependenciesController : ApiController
     {

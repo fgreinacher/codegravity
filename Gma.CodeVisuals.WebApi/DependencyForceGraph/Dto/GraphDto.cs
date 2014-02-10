@@ -1,7 +1,6 @@
 ﻿using System.Runtime.Serialization;
-using nsplit.Api.Dto;
 
-namespace nsplit.Api
+namespace Gma.CodeVisuals.WebApi.DependencyForceGraph.Dto
 {
     [DataContract]
     public class GraphDto

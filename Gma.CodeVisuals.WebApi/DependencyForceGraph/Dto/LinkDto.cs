@@ -8,7 +8,7 @@ using System.Runtime.Serialization;
 
 #endregion
 
-namespace nsplit.Api.Dto
+namespace Gma.CodeVisuals.WebApi.DependencyForceGraph.Dto
 {
     [DataContract]
     public class LinkDto

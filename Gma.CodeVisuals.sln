@@ -5,7 +5,7 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gma.CodeVisuals.DependencyForceGraph.Tests", "Gma.CodeGravity.Tests\Gma.CodeVisuals.DependencyForceGraph.Tests.csproj", "{8AA40642-7259-45BC-B96D-A0EE4B6CC68E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gma.CodeVisuals.WebApi", "nsplit\Gma.CodeVisuals.WebApi.csproj", "{7416F52D-821A-4392-8BAF-A2F705D099E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gma.CodeVisuals.WebApi", "Gma.CodeVisuals.WebApi\Gma.CodeVisuals.WebApi.csproj", "{7416F52D-821A-4392-8BAF-A2F705D099E2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{D45C4C08-8A43-43A6-9100-F2B27EBAD5BE}"
 	ProjectSection(SolutionItems) = preProject
