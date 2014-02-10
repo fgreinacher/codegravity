@@ -64,9 +64,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DependencyForceGraph\Dto\Tree.cs" />
-    <Compile Include="DependencyForceGraph\Dto\LinkDto.cs" />
-    <Compile Include="DependencyForceGraph\Dto\GraphDto.cs" />
+    <Compile Include="DependencyForceGraph\Dto\GraphDto.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DependencyForceGraph\Dto\LinkDto.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DependencyForceGraph\Dto\Tree.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="DependencyForceGraph\Storage.cs" />
     <Compile Include="DependencyForceGraph\DependenciesController.cs" />
     <Compile Include="Server\FileType.cs" />
@@ -81,7 +87,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
