@@ -81,10 +81,11 @@ namespace Gma.CodeVisuals.WebApi
                 {
                     Console.WriteLine("Failed to start server on [{0}]", HttpLocalhost);
                     Console.WriteLine(ex.ToString());
-                    Process.Start("readme.html");
+                    Process.Start("port8080problem.html");
                     return;
                 }
                 Process.Start(HttpLocalhost + "/index.html");
+                Console.WriteLine("Press any key to quit.");
                 Console.ReadKey();
             }
         }

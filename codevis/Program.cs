@@ -34,7 +34,7 @@ namespace Gma.CodeVisuals.Generator
         {
             var options = new Options();
             bool isOk = Parser.Default.ParseArguments(args, options);
-            if (!isOk)
+            if (!isOk || options.Assemblies==null || options.Assemblies.Count==0)
             {
                 Console.WriteLine(options.GetUsage());
                 Environment.Exit(1);

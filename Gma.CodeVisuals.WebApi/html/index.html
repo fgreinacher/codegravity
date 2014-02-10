@@ -16,11 +16,15 @@
                 <ul id="list">
                 </ul>
             </div>
+            <h4>2. Generate your own dependency graph files:</h4>
             <p>
-                Analyze the default assembly:
-                <button id="demo">Demo</button>
+                <pre>
+                    > codevis.exe C:\Framework\System.Core.dll
+                    > codevis.exe C:\Framework\System.Data*
+                    > codevis.exe MyAssembly System.Core System.Linq -p:C:\framework\;c:\myfolder
+                </pre>
             </p>
-            <h4>Play with id:</h4>
+            <h4>3. Play with it:</h4>
             <ul>
                 <li>Mouse over nodes to see details</li>
                 <li>Click namespace nodes to burst them</li>
