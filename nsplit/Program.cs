@@ -12,9 +12,7 @@ using System.Reflection;
 using System.ServiceModel;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
-using AutoMapper;
 using nsplit.Api;
-using nsplit.CodeAnalyzis;
 using nsplit.Helper;
 
 #endregion
@@ -24,7 +22,7 @@ namespace nsplit
     internal class Program
     {
         public const string HttpLocalhost = "http://localhost:8080";
-        
+
         public static Storage Storage;
 
         [STAThread]
@@ -36,48 +34,12 @@ namespace nsplit
                 Environment.Exit(1);
             };
 
-            var storagePath = Path.Combine(GetExePath(), "data");
+            var storagePath = args.Length > 0
+                ? args[0]
+                : Storage.GetDefaultPath();
             Storage = new Storage(storagePath);
-           
-            if (args.Length > 0)
-            {
-                Analyze(args[0], true, Storage);
-                return;
-            }
-
             StartHttpServer();
         }
-
-        public static void Analyze(string assemblyPath, bool saveResults, Storage storage)
-        {
-            var ePrev = AnalyzesProgress.Started();
-            var analyzer = new Analyzer(eCurrent =>
-            {
-                ePrev = DoProgress(eCurrent, ePrev);
-            });
-
-            var graph = analyzer.Analyze(assemblyPath);
-            var dto = Mapper.DynamicMap<GraphDto>(graph);
-            if (saveResults)storage.Save(dto);
-        }
-
-        private static AnalyzesProgress DoProgress(AnalyzesProgress eCurrent, AnalyzesProgress ePrev)
-        {
-            if (eCurrent.IsFinished)
-            {
-                Console.WriteLine("Analyzes finished.");
-                return ePrev;
-            }
-            var currentPercentage = eCurrent.Actual*100/eCurrent.Max;
-            int prevPercentage = ePrev.Actual*100/ePrev.Max;
-            if (currentPercentage != prevPercentage)
-            {
-                Console.WriteLine("\r{0}\t{1}", eCurrent.Message, currentPercentage);
-                ePrev = eCurrent;
-            }
-            return ePrev;
-        }
-
 
         private static void StartHttpServer()
         {
@@ -127,10 +89,10 @@ namespace nsplit
             }
         }
 
-
         private static string GetExePath()
         {
             return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         }
+    
     }
 }

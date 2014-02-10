@@ -13,6 +13,9 @@ window.onresize = resize;
 
 var force = d3.layout
     .force()
+    .charge(-30)
+    .linkStrength(.1)
+    .linkDistance(function (link) { return 2 * (link.source.getRadius() + link.target.getRadius()); })
     .on("tick", tick);
 
 function get(name) {
@@ -21,7 +24,7 @@ function get(name) {
     else return "";
 }
 
-d3.json("api/dependencies/graph?name=" + get("name"), function (json) {
+d3.json("api/dependencies/graph?name=" + get("name"), function(json) {
 
     root = new Vertex(json.tree);
     root.fixed = true;
@@ -32,21 +35,21 @@ d3.json("api/dependencies/graph?name=" + get("name"), function (json) {
 
     verticesById = vertices.indexById();
 
-    tree = (new Tree("#typetree", json.tree))
-    .onOpen(function (id, deep) {
-        var vertex = verticesById[id];
-        vertex.toggle(true, deep);
-        update();
-    })
-    .onClose(function (id, deep) {
-        var vertex = verticesById[id];
-        vertex.toggle(false, deep);
-        update();
-    })
-    .onSelect(function (ids) {
-         root.selected = ids;
-         update();
-     });
+    new Tree("#typetree", json.tree)
+        .onOpen(function(id, deep) {
+            var vertex = verticesById[id];
+            vertex.toggle(true, deep);
+            update();
+        })
+        .onClose(function(id, deep) {
+            var vertex = verticesById[id];
+            vertex.toggle(false, deep);
+            update();
+        })
+        .onSelect(function(ids) {
+            root.selected = ids;
+            update();
+        });
 
     rawLinks = json.links;
     resize();
@@ -176,7 +179,7 @@ function showText(d) {
         .style("opacity", ".9")
         .style("left", (d3.event.pageX + 35) + "px")
         .style("top", (d3.event.pageY - 35) + "px");
-    
+
     toolTip.select("#toolTipHead")
         .text(d.text);
 
@@ -193,6 +196,7 @@ function hideText() {
 }
 
 function click(d) {
+    if (d3.event.defaultPrevented) return;
     d.toggle(!d.isExpanded, false);
     update();
 }

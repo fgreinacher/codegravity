@@ -1,6 +1,7 @@
 ﻿// This code is distributed under MIT license. 
 // Copyright (c) 2014 George Mamaladze, Florian Greinacher
 // See license.txt or http://opensource.org/licenses/mit-license.php
+
 function startAnalyzes(file) {
     var saveChecked = $("input:checked").length>0;
     $.getJSON("api/analyzes/start?file=" + file + "&save=" + saveChecked, function (data) {
@@ -30,13 +31,13 @@ function goToGraph() {
     window.location.replace(newUrl);
 }
 
-function supportsCanvas() {
+function supportsSvg() {
     return document.createElement('svg');
 }
 
 $(document).ready(function () {
 
-    if (!supportsCanvas()) {
+    if (!supportsSvg()) {
         $("#warning").style("visibility", "visible");
     }
 
