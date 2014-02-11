@@ -27,7 +27,7 @@ namespace Gma.CodeVisuals.Generator
             var options = GetParsedArguments(args);
             var graph = Generate(options);
             Save(graph, options.Output);
-            if (options.Verbose) Process.Start("Gma.CodeVisuals.WebApi.exe");
+            //if (options.Verbose) Process.Start("Gma.CodeVisuals.WebApi.exe");
         }
 
         private static Options GetParsedArguments(string[] args)
