@@ -14,7 +14,7 @@ window.onresize = resize;
 var force = d3.layout
     .force()
     .charge(-30)
-    .linkStrength(.1)
+    .linkStrength(.3)
     .linkDistance(function (link) { return 2 * (link.source.getRadius() + link.target.getRadius()); })
     .on("tick", tick);
 

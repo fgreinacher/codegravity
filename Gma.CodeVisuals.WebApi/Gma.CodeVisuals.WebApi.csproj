@@ -82,9 +82,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\WebServerOnFolder.cs" />
-    <None Include="_DependencyForceGraphs\[DEMO] System.Core.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="_DependencyForceGraphs\[DEMO LARGE] System.Core.json" />
+    <None Include="_DependencyForceGraphs\[DEMO SMALL] Microsoft.Practices.EnterpriseLibrary.Logging.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
